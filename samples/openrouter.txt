@@ -1,0 +1,135 @@
+: OPENROUTER PROCESSING
+
+: OPENROUTER PROCESSING
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":""},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" The"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" sum"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" of"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" "},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":"2"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" and"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" "},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":"2"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" is"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" "},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":"4"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":"."},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" This"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" is"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" a"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" basic"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" arithmetic"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" operation"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" where"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" you"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" add"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" the"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" two"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" numbers"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" together"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" to"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" get"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" the"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" total"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":"."},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" "},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":"\n"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":"\n"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":"Here"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":"'"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":"s"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" the"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" calculation"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":":"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":"\n"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":"\n"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":"2"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" +"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" "},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":"2"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" ="},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" "},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":"4"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":"\n"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":"\n"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":"So"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":","},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" the"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" answer"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" to"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" your"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" question"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" is"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":" "},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":"4"},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":"."},"finish_reason":null,"logprobs":null}]}
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":""},"finish_reason":"stop","logprobs":null}]}
+
+: OPENROUTER PROCESSING
+
+data: {"id":"gen-1729004990-gTyfUdC2AMGEv0NpAg7u","provider":"Azure","model":"microsoft/phi-3.5-mini-128k-instruct","object":"chat.completion.chunk","created":1729004990,"choices":[{"index":0,"delta":{"role":"assistant","content":""},"finish_reason":null,"logprobs":null}],"usage":{"prompt_tokens":17,"completion_tokens":62,"total_tokens":79}}
+
+data: [DONE]

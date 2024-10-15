@@ -1,0 +1,9 @@
+data: invalid json
+
+data: {"error": {"message": "OpenAI API error", "type": "api_error"}}
+
+data: {"error": {"type": "invalid_request_error", "message": "Anthropic API error"}}
+
+data: {"error": {"code": 400, "message": "Gemini API error"}}
+
+data: {"message": {"error": "OpenRouter API error"}}

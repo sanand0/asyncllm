@@ -1,0 +1,46 @@
+{
+  "name": "asyncllm",
+  "version": "1.0.0",
+  "description": "Fetch streaming LLM responses as an async iterable",
+  "main": "dist/asyncllm.js",
+  "type": "module",
+  "module": "index.js",
+  "scripts": {
+    "test": "deno test --allow-net --allow-read",
+    "build": "npx -y esbuild index.js --bundle --minify --format=esm --outfile=dist/asyncllm.js"
+  },
+  "keywords": [
+    "sse",
+    "fetch",
+    "async",
+    "iterable",
+    "server-sent-events",
+    "streaming",
+    "llm",
+    "openai",
+    "anthropic",
+    "gemini",
+    "cloudflare"
+  ],
+  "author": "S Anand <root.node@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gramener/asyncllm.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gramener/asyncllm/issues"
+  },
+  "homepage": "https://github.com/gramener/asyncllm#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "files": [
+    "dist/asyncllm.js",
+    "index.js",
+    "index.d.ts"
+  ],
+  "dependencies": {
+    "asyncsse": "^1.0.0"
+  }
+}
