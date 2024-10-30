@@ -64,11 +64,15 @@ export function gemini(body) {
       : {};
 
   // Convert function definitions to Gemini's tool format
-  const tools = body.tools?.map((tool) => ({
-    name: tool.function.name,
-    description: tool.function.description,
-    parameters: geminiSchema(structuredClone(tool.function.parameters)),
-  }));
+  const tools = body.tools
+    ? {
+        functionDeclarations: body.tools.map((tool) => ({
+          name: tool.function.name,
+          description: tool.function.description,
+          parameters: geminiSchema(structuredClone(tool.function.parameters)),
+        })),
+      }
+    : {};
 
   // Only include optional configs if they exist
   return {
@@ -84,7 +88,7 @@ export function gemini(body) {
 const geminiPartFromURL = (url) => {
   if (url.startsWith("data:")) {
     const [base, base64Data] = url.split(",");
-    return { inlineData: { mimeType: base.replace("data:", ""), data: base64Data } };
+    return { inlineData: { mimeType: base.replace("data:", "").replace(";base64", ""), data: base64Data } };
   }
   return { fileData: { fileUri: url } };
 };

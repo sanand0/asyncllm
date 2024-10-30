@@ -73,7 +73,7 @@ Deno.test("gemini - multimodal content", () => {
         role: "user",
         parts: [
           { text: "What's in this image?" },
-          { inlineData: { mimeType: "image/jpeg;base64", data: "abc123" } },
+          { inlineData: { mimeType: "image/jpeg", data: "abc123" } },
           { fileData: { fileUri: "https://example.com/audio.mp3" } },
         ],
       },
@@ -140,17 +140,19 @@ Deno.test("gemini - tool calling configurations", () => {
   const expected = {
     contents: [{ role: "user", parts: [{ text: "Hi" }] }],
     toolsConfig: { function_calling_config: { mode: "AUTO" } },
-    tools: [
-      {
-        name: "get_weather",
-        description: "Get weather info",
-        parameters: {
-          type: "object",
-          properties: { location: { type: "string" } },
-          required: ["location"],
+    tools: {
+      functionDeclarations: [
+        {
+          name: "get_weather",
+          description: "Get weather info",
+          parameters: {
+            type: "object",
+            properties: { location: { type: "string" } },
+            required: ["location"],
+          },
         },
-      },
-    ],
+      ],
+    },
   };
 
   assertEquals(gemini(input), expected);

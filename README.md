@@ -93,17 +93,33 @@ Returns an async generator that yields [`LLMEvent` objects](#llmevent).
 ### OpenAI
 
 ```javascript
+import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@1";
+
+const body = {
+  model: "gpt-4o-mini",
+  stream: true,
+  messages: [
+    { role: "system", content: "You are a helpful assistant." },
+    { role: "user", content: "What is 2+2?" },
+  ],
+  temperature: 0.7,
+  max_tokens: 10,
+  tools: [
+    {
+      type: "function",
+      function: {
+        name: "get_weather",
+        description: "Get the weather for a location",
+        parameters: { type: "object", properties: { location: { type: "string" } }, required: ["location"] },
+      },
+    },
+  ],
+};
+
 for await (const { content } of asyncLLM("https://api.openai.com/v1/chat/completions", {
   method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${apiKey}`,
-  },
-  body: JSON.stringify({
-    model: "gpt-4",
-    stream: true,
-    messages: [{ role: "user", content: "Hello world" }],
-  }),
+  headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+  body: JSON.stringify(body),
 })) {
   console.log(content);
 }
@@ -111,23 +127,42 @@ for await (const { content } of asyncLLM("https://api.openai.com/v1/chat/complet
 
 ### Anthropic
 
+The package includes an Anthropic adapter that converts OpenAI-style requests to Anthropic's format,
+allowing you to use the same code structure across providers.
+
 ```javascript
+import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@1";
+import { anthropic } from "https://cdn.jsdelivr.net/npm/asyncllm@1/dist/anthropic.js";
+
+// You can use the anthropic() adapter to convert OpenAI-style requests to Anthropic's format.
+const body = anthropic({
+  // Same as OpenAI example above
+});
+
+// Or you can use the asyncLLM() function directly with the Anthropic API endpoint.
+const body = {
+  model: "claude-3-haiku-20240307",
+  stream: true,
+  max_tokens: 10,
+  messages: [{ role: "user", content: "What is 2 + 2" }],
+};
+
 for await (const { content } of asyncLLM("https://api.anthropic.com/v1/messages", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "x-api-key": apiKey,
-  },
-  body: JSON.stringify({
-    model: "claude-3-haiku-20240307",
-    stream: true,
-    max_tokens: 10,
-    messages: [{ role: "user", content: "What is 2 + 2" }],
-  }),
+  headers: { "Content-Type": "application/json", "x-api-key": apiKey },
+  body: JSON.stringify(body),
 })) {
   console.log(content);
 }
 ```
+
+The Anthropic adapter supports:
+
+- System messages
+- Multi-modal content (text and images only, no audio support)
+- Model parameters (temperature, max_tokens, top_p, stop, metadata.user_id, but not n, presence_penalty, frequency_penalty, logprobs, top_logprobs)
+- User metadata
+- Function/tool calling with parallel execution control
+- Stop sequences
 
 ### Gemini
 
@@ -138,36 +173,22 @@ allowing you to use the same code structure across providers.
 import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@1";
 import { gemini } from "https://cdn.jsdelivr.net/npm/asyncllm@1/dist/gemini.js";
 
+// You can use the anthropic() adapter to convert OpenAI-style requests to Anthropic's format.
+const body = anthropic({
+  // Same as OpenAI example above
+});
+
+// Or you can use the asyncLLM() function directly with the Anthropic API endpoint.
+const body = {
+  contents: [{ role: "user", parts: [{ text: "What is 2+2?" }] }],
+};
+
 for await (const { content } of asyncLLM(
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:streamGenerateContent?alt=sse",
   {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify(
-      gemini({
-        // Use OpenAI-style parameters
-        model: "gemini-1.5-flash-8b",
-        messages: [
-          { role: "system", content: "You are a helpful assistant." },
-          { role: "user", content: "What is 2+2?" },
-        ],
-        temperature: 0.7,
-        max_tokens: 100,
-        tools: [
-          {
-            type: "function",
-            function: {
-              name: "get_weather",
-              description: "Get the weather for a location",
-              parameters: { type: "object", properties: { location: { type: "string" } }, required: ["location"] },
-            },
-          },
-        ],
-      })
-    ),
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+    body: JSON.stringify(body),
   }
 )) {
   console.log(content);
@@ -177,19 +198,19 @@ for await (const { content } of asyncLLM(
 The Gemini adapter supports:
 
 - System messages
-- Multi-modal content (text, images, audio)
-- Generation parameters (temperature, max_tokens, etc.)
-- Function calling
+- Multi-modal content (text, images, audio via URL or data URI)
+- Model parameters (temperature, max_tokens, top_p, stop, n, presence_penalty, frequency_penalty, logprobs, top_logprobs, but not metadata)
+- Function calling (no parallel execution support)
 - JSON mode and schema validation
 - Stop sequences
 - Multiple candidates
 
 ### Function Calling
 
-asyncLLM supports function calling for compatible LLM providers. Here's an example with OpenAI:
+asyncLLM supports function calling (aka tools). Here's an example with OpenAI:
 
 ```javascript
-for await (const { content, tool, args } of asyncLLM("https://api.openai.com/v1/chat/completions", {
+for await (const { content, tool, args, error } of asyncLLM("https://api.openai.com/v1/chat/completions", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
@@ -218,12 +239,29 @@ for await (const { content, tool, args } of asyncLLM("https://api.openai.com/v1/
     ],
   }),
 })) {
-  console.log(content, tool, args);
+  console.log(error ?? content, tool, args);
+}
+```
+
+The `tool` and `args` properties are incrementally streamed until the LLM calls a tool.
+
+### Error handling
+
+If an error occurs, it will be yielded in the `error` property. For example:
+
+```javascript
+for await (const { content, error } of asyncLLM("https://api.openai.com/v1/chat/completions", {
+  method: "POST",
+  // ...
+})) {
+  if (error) console.error(error);
+  else console.log(content);
 }
 ```
 
 ## Changelog
 
+- 1.1.1: Added [Anthropic adapter](#anthropic)
 - 1.1.0: Added [Gemini adapter](#gemini)
 - 1.0.0: Initial release with [asyncLLM](#asyncllm) and [LLMEvent](#llmevent)
 
