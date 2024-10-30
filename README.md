@@ -131,7 +131,13 @@ for await (const { content } of asyncLLM("https://api.anthropic.com/v1/messages"
 
 ### Gemini
 
+The package includes a Gemini adapter that converts OpenAI-style requests to Gemini's format,
+allowing you to use the same code structure across providers.
+
 ```javascript
+import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@1";
+import { gemini } from "https://cdn.jsdelivr.net/npm/asyncllm@1/dist/gemini.js";
+
 for await (const { content } of asyncLLM(
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:streamGenerateContent?alt=sse",
   {
@@ -140,14 +146,43 @@ for await (const { content } of asyncLLM(
       "Content-Type": "application/json",
       Authorization: `Bearer ${apiKey}`,
     },
-    body: JSON.stringify({
-      contents: [{ role: "user", parts: [{ text: "What is 2+2?" }] }],
-    }),
+    body: JSON.stringify(
+      gemini({
+        // Use OpenAI-style parameters
+        model: "gemini-1.5-flash-8b",
+        messages: [
+          { role: "system", content: "You are a helpful assistant." },
+          { role: "user", content: "What is 2+2?" },
+        ],
+        temperature: 0.7,
+        max_tokens: 100,
+        tools: [
+          {
+            type: "function",
+            function: {
+              name: "get_weather",
+              description: "Get the weather for a location",
+              parameters: { type: "object", properties: { location: { type: "string" } }, required: ["location"] },
+            },
+          },
+        ],
+      })
+    ),
   }
 )) {
   console.log(content);
 }
 ```
+
+The Gemini adapter supports:
+
+- System messages
+- Multi-modal content (text, images, audio)
+- Generation parameters (temperature, max_tokens, etc.)
+- Function calling
+- JSON mode and schema validation
+- Stop sequences
+- Multiple candidates
 
 ### Function Calling
 
@@ -186,6 +221,11 @@ for await (const { content, tool, args } of asyncLLM("https://api.openai.com/v1/
   console.log(content, tool, args);
 }
 ```
+
+## Changelog
+
+- 1.1.0: Added [Gemini adapter](#gemini)
+- 1.0.0: Initial release with [asyncLLM](#asyncllm) and [LLMEvent](#llmevent)
 
 ## Contributing
 

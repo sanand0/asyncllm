@@ -70,6 +70,7 @@ Deno.test("asyncLLM - OpenAI with tool calls", async () => {
   assertEquals(results[1].args, '{"');
   assertEquals(results[7].args, '{"order_id":"123456"}');
   assertEquals(results[7].content, undefined);
+
   assertEquals(JSON.parse(results.at(-1).args), { order_id: "123456" });
 });
 

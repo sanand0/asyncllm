@@ -1,13 +1,19 @@
 {
   "name": "asyncllm",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Fetch streaming LLM responses as an async iterable",
   "main": "dist/asyncllm.js",
   "type": "module",
   "module": "index.js",
+  "exports": {
+    ".": "./dist/asyncllm.js",
+    "./gemini": "./dist/gemini.js"
+  },
   "scripts": {
     "test": "deno test --allow-net --allow-read",
-    "build": "npx -y esbuild index.js --bundle --minify --format=esm --outfile=dist/asyncllm.js"
+    "build-asyncllm": "npx -y esbuild index.js --bundle --minify --format=esm --outfile=dist/asyncllm.js",
+    "build-gemini": "npx -y esbuild gemini.js --bundle --minify --format=esm --outfile=dist/gemini.js",
+    "build": "npm run build-asyncllm && npm run build-gemini"
   },
   "keywords": [
     "sse",
