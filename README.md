@@ -173,8 +173,8 @@ allowing you to use the same code structure across providers.
 import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@1";
 import { gemini } from "https://cdn.jsdelivr.net/npm/asyncllm@1/dist/gemini.js";
 
-// You can use the anthropic() adapter to convert OpenAI-style requests to Anthropic's format.
-const body = anthropic({
+// You can use the gemini() adapter to convert OpenAI-style requests to Gemini's format.
+const body = gemini({
   // Same as OpenAI example above
 });
 
@@ -261,6 +261,7 @@ for await (const { content, error } of asyncLLM("https://api.openai.com/v1/chat/
 
 ## Changelog
 
+- 1.1.2: Corrected [Gemini](#gemini) docs to use `gemini()` instead of `anthropic()`
 - 1.1.1: Added [Anthropic adapter](#anthropic)
 - 1.1.0: Added [Gemini adapter](#gemini)
 - 1.0.0: Initial release with [asyncLLM](#asyncllm) and [LLMEvent](#llmevent)
