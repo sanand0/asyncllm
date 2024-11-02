@@ -16,7 +16,11 @@ export function anthropic(body) {
       content: Array.isArray(msg.content)
         ? msg.content.map(({ type, text, image_url }) => {
             if (type === "text") return { type: "text", text };
-            else if (type === "image_url") return { type: "image", source: anthropicSourceFromURL(image_url.url) };
+            else if (type === "image_url")
+              return {
+                type: "image",
+                source: anthropicSourceFromURL(image_url.url),
+              };
             // Anthropic doesn't support audio
           })
         : msg.content,
@@ -27,7 +31,7 @@ export function anthropic(body) {
   // Map OpenAI parameters to Anthropic equivalents, only including if defined
   const params = {
     model: body.model,
-    ...(typeof body.max_tokens == "number" ? { max_tokens: body.max_tokens } : {}),
+    max_tokens: body.max_tokens ?? 4096,
     ...(body.metadata?.user_id ? { metadata: { user_id: body.metadata?.user_id } } : {}),
     ...(typeof body.stream == "boolean" ? { stream: body.stream } : {}),
     ...(typeof body.temperature == "number" ? { temperature: body.temperature } : {}),
@@ -36,19 +40,25 @@ export function anthropic(body) {
     ...(typeof body.stop == "string"
       ? { stop_sequences: [body.stop] }
       : Array.isArray(body.stop)
-      ? { stop_sequences: body.stop }
-      : {}),
+        ? { stop_sequences: body.stop }
+        : {}),
     // Anthropic does not support JSON mode
     // Convert OpenAI tool_choice to Anthropic's tools_choice
     ...(body.tool_choice == "auto"
       ? { tool_choice: { type: "auto", ...parallel_tool_calls } }
       : body.tool_choice == "required"
-      ? { tool_choice: { type: "any", ...parallel_tool_calls } }
-      : body.tool_choice == "none"
-      ? {}
-      : typeof body.tool_choice == "object"
-      ? { tool_choice: { type: "tool", name: body.tool_choice.function?.name, ...parallel_tool_calls } }
-      : {}),
+        ? { tool_choice: { type: "any", ...parallel_tool_calls } }
+        : body.tool_choice == "none"
+          ? {}
+          : typeof body.tool_choice == "object"
+            ? {
+                tool_choice: {
+                  type: "tool",
+                  name: body.tool_choice.function?.name,
+                  ...parallel_tool_calls,
+                },
+              }
+            : {}),
   };
 
   // Convert function definitions to Anthropic's tool format
@@ -71,6 +81,10 @@ export function anthropic(body) {
 const anthropicSourceFromURL = (url) => {
   if (url.startsWith("data:")) {
     const [base, base64Data] = url.split(",");
-    return { type: "base64", media_type: base.replace("data:", "").replace(";base64", ""), data: base64Data };
+    return {
+      type: "base64",
+      media_type: base.replace("data:", "").replace(";base64", ""),
+      data: base64Data,
+    };
   }
 };

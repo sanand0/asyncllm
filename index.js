@@ -29,6 +29,11 @@ export async function* asyncLLM(request, options = {}) {
     // OpenAI and Cloudflare AI Workers use "[DONE]" to indicate the end of the stream
     if (event.data === "[DONE]") break;
 
+    if (!event.data) {
+      yield { error: "No data" };
+      continue;
+    }
+
     let message;
     try {
       message = JSON.parse(event.data);

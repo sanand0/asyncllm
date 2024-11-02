@@ -3,7 +3,7 @@ import { gemini } from "./gemini.js";
 function assertEquals(actual, expected, message) {
   if (JSON.stringify(actual) === JSON.stringify(expected)) return;
   throw new Error(
-    message || `Expected:\n${JSON.stringify(expected, null, 2)}. Actual:\n${JSON.stringify(actual, null, 2)}`
+    message || `Expected:\n${JSON.stringify(expected, null, 2)}. Actual:\n${JSON.stringify(actual, null, 2)}`,
   );
 }
 
@@ -60,8 +60,14 @@ Deno.test("gemini - multimodal content", () => {
         role: "user",
         content: [
           { type: "text", text: "What's in this image?" },
-          { type: "image_url", image_url: { url: "data:image/jpeg;base64,abc123" } },
-          { type: "input_audio", input_audio: { data: "https://example.com/audio.mp3" } },
+          {
+            type: "image_url",
+            image_url: { url: "data:image/jpeg;base64,abc123" },
+          },
+          {
+            type: "input_audio",
+            input_audio: { data: "https://example.com/audio.mp3" },
+          },
         ],
       },
     ],
@@ -167,7 +173,10 @@ Deno.test("gemini - specific tool choice", () => {
   const expected = {
     contents: [{ role: "user", parts: [{ text: "Hi" }] }],
     toolsConfig: {
-      function_calling_config: { mode: "ANY", allowed_function_names: ["get_weather"] },
+      function_calling_config: {
+        mode: "ANY",
+        allowed_function_names: ["get_weather"],
+      },
     },
   };
 
@@ -182,7 +191,11 @@ Deno.test("gemini - json schema response format", () => {
       json_schema: {
         schema: {
           type: "object",
-          properties: { name: { type: "string" }, age: { type: "number" }, additionalProperties: false },
+          properties: {
+            name: { type: "string" },
+            age: { type: "number" },
+            additionalProperties: false,
+          },
         },
       },
     },

@@ -31,7 +31,7 @@ The result is an async generator that yields objects with `content`, `tool`, and
 For example, to update the DOM with the LLM's response:
 
 ```html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <body>
     <div id="output"></div>
@@ -110,7 +110,11 @@ const body = {
       function: {
         name: "get_weather",
         description: "Get the weather for a location",
-        parameters: { type: "object", properties: { location: { type: "string" } }, required: ["location"] },
+        parameters: {
+          type: "object",
+          properties: { location: { type: "string" } },
+          required: ["location"],
+        },
       },
     },
   ],
@@ -118,7 +122,10 @@ const body = {
 
 for await (const { content } of asyncLLM("https://api.openai.com/v1/chat/completions", {
   method: "POST",
-  headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${apiKey}`,
+  },
   body: JSON.stringify(body),
 })) {
   console.log(content);
@@ -187,9 +194,12 @@ for await (const { content } of asyncLLM(
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:streamGenerateContent?alt=sse",
   {
     method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
     body: JSON.stringify(body),
-  }
+  },
 )) {
   console.log(content);
 }
@@ -220,7 +230,10 @@ for await (const { content, tool, args, error } of asyncLLM("https://api.openai.
     model: "gpt-4",
     stream: true,
     messages: [
-      { role: "system", content: "Call get_delivery_date with the order ID." },
+      {
+        role: "system",
+        content: "Call get_delivery_date with the order ID.",
+      },
       { role: "user", content: "123456" },
     ],
     tools: [
@@ -231,7 +244,12 @@ for await (const { content, tool, args, error } of asyncLLM("https://api.openai.
           description: "Get the delivery date for a customer order.",
           parameters: {
             type: "object",
-            properties: { order_id: { type: "string", description: "The customer order ID." } },
+            properties: {
+              order_id: {
+                type: "string",
+                description: "The customer order ID.",
+              },
+            },
             required: ["order_id"],
           },
         },
@@ -261,6 +279,7 @@ for await (const { content, error } of asyncLLM("https://api.openai.com/v1/chat/
 
 ## Changelog
 
+- 1.1.3: Ensure `max_tokens` for Anthropic. Improve error handling
 - 1.1.1: Added [Anthropic adapter](#anthropic)
 - 1.1.0: Added [Gemini adapter](#gemini)
 - 1.0.0: Initial release with [asyncLLM](#asyncllm) and [LLMEvent](#llmevent)

@@ -3,7 +3,7 @@ import { anthropic } from "./anthropic.js";
 function assertEquals(actual, expected, message) {
   if (JSON.stringify(actual) === JSON.stringify(expected)) return;
   throw new Error(
-    message || `Expected:\n${JSON.stringify(expected, null, 2)}. Actual:\n${JSON.stringify(actual, null, 2)}`
+    message || `Expected:\n${JSON.stringify(expected, null, 2)}. Actual:\n${JSON.stringify(actual, null, 2)}`,
   );
 }
 
@@ -19,6 +19,7 @@ Deno.test("anthropic - system message handling", () => {
   const expected = {
     system: "You are helpful",
     messages: [{ role: "user", content: "Hi" }],
+    max_tokens: 4096,
   };
 
   assertEquals(anthropic(input), expected);
@@ -32,6 +33,7 @@ Deno.test("anthropic - basic message conversion", () => {
 
   const expected = {
     messages: [{ role: "user", content: "Hello" }],
+    max_tokens: 4096,
   };
 
   assertEquals(anthropic(input), expected);
@@ -45,7 +47,10 @@ Deno.test("anthropic - multimodal content", () => {
         role: "user",
         content: [
           { type: "text", text: "What's in this image?" },
-          { type: "image_url", image_url: { url: "data:image/jpeg;base64,abc123" } },
+          {
+            type: "image_url",
+            image_url: { url: "data:image/jpeg;base64,abc123" },
+          },
         ],
       },
     ],
@@ -57,10 +62,18 @@ Deno.test("anthropic - multimodal content", () => {
         role: "user",
         content: [
           { type: "text", text: "What's in this image?" },
-          { type: "image", source: { type: "base64", media_type: "image/jpeg", data: "abc123" } },
+          {
+            type: "image",
+            source: {
+              type: "base64",
+              media_type: "image/jpeg",
+              data: "abc123",
+            },
+          },
         ],
       },
     ],
+    max_tokens: 4096,
   };
 
   assertEquals(anthropic(input), expected);
@@ -102,6 +115,7 @@ Deno.test("anthropic - array stop sequences", () => {
 
   const expected = {
     messages: [{ role: "user", content: "Hi" }],
+    max_tokens: 4096,
     stop_sequences: ["STOP", "END"],
   };
 
@@ -130,6 +144,7 @@ Deno.test("anthropic - tool calling configurations", () => {
 
   const expected = {
     messages: [{ role: "user", content: "Hi" }],
+    max_tokens: 4096,
     tool_choice: { type: "auto", disable_parallel_tool_use: false },
     tools: [
       {
@@ -155,6 +170,7 @@ Deno.test("anthropic - specific tool choice", () => {
 
   const expected = {
     messages: [{ role: "user", content: "Hi" }],
+    max_tokens: 4096,
     tool_choice: { type: "tool", name: "get_weather" },
   };
 

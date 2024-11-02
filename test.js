@@ -6,14 +6,16 @@ const BASE_URL = `http://localhost:${PORT}`;
 function assertEquals(actual, expected, message) {
   if (JSON.stringify(actual) === JSON.stringify(expected)) return;
   throw new Error(
-    message || `Expected:\n${JSON.stringify(expected, null, 2)}. Actual:\n${JSON.stringify(actual, null, 2)}`
+    message || `Expected:\n${JSON.stringify(expected, null, 2)}. Actual:\n${JSON.stringify(actual, null, 2)}`,
   );
 }
 
 Deno.serve({ port: PORT }, async (req) => {
   const url = new URL(req.url);
   const file = await Deno.readFile(`samples${url.pathname}`);
-  return new Response(file, { headers: { "Content-Type": "text/event-stream" } });
+  return new Response(file, {
+    headers: { "Content-Type": "text/event-stream" },
+  });
 });
 
 /*
@@ -100,7 +102,10 @@ Deno.test("asyncLLM - Anthropic with tool calls", async () => {
   assertEquals(results[13].tool, "get_weather");
   assertEquals(results[14].args, "");
   assertEquals(results.at(-1).tool, "get_weather");
-  assertEquals(JSON.parse(results.at(-1).args), { location: "San Francisco, CA", unit: "fahrenheit" });
+  assertEquals(JSON.parse(results.at(-1).args), {
+    location: "San Francisco, CA",
+    unit: "fahrenheit",
+  });
 });
 
 /*
@@ -173,7 +178,7 @@ Deno.test("asyncLLM - OpenRouter", async () => {
   assertEquals(results[2].content, " The sum");
   assertEquals(
     results.at(-1).content,
-    " The sum of 2 and 2 is 4. This is a basic arithmetic operation where you add the two numbers together to get the total. \n\nHere's the calculation:\n\n2 + 2 = 4\n\nSo, the answer to your question is 4."
+    " The sum of 2 and 2 is 4. This is a basic arithmetic operation where you add the two numbers together to get the total. \n\nHere's the calculation:\n\n2 + 2 = 4\n\nSo, the answer to your question is 4.",
   );
   assertEquals(results.at(-1).tool, undefined);
   assertEquals(results.at(-1).args, undefined);
@@ -185,7 +190,7 @@ Deno.test("asyncLLM - Error handling", async () => {
   assertEquals(results.length, 5);
 
   // Malformed JSON
-  assertEquals(results[0].error.startsWith("Unexpected token"), true);
+  assertEquals(results[0].error, "Unexpected token 'i', \"invalid json\" is not valid JSON");
 
   // OpenAI-style error
   assertEquals(results[1].error, "OpenAI API error");

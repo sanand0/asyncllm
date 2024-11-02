@@ -38,17 +38,17 @@ export function gemini(body) {
     ...(typeof body.stop == "string"
       ? { stopSequences: [body.stop] }
       : Array.isArray(body.stop)
-      ? { stopSequences: body.stop }
-      : {}),
+        ? { stopSequences: body.stop }
+        : {}),
     // Handle JSON response formatting and schemas
     ...(body.response_format?.type == "json_object"
       ? { responseMimeType: "application/json" }
       : body.response_format?.type == "json_schema"
-      ? {
-          responseMimeType: "application/json",
-          responseSchema: geminiSchema(structuredClone(body.response_format?.json_schema?.schema)),
-        }
-      : {}),
+        ? {
+            responseMimeType: "application/json",
+            responseSchema: geminiSchema(structuredClone(body.response_format?.json_schema?.schema)),
+          }
+        : {}),
   };
 
   // Convert OpenAI tool_choice to Gemini's function calling modes
@@ -56,12 +56,17 @@ export function gemini(body) {
     body.tool_choice == "auto"
       ? { function_calling_config: { mode: "AUTO" } }
       : body.tool_choice == "required"
-      ? { function_calling_config: { mode: "ANY" } }
-      : body.tool_choice == "none"
-      ? { function_calling_config: { mode: "NONE" } }
-      : typeof body.tool_choice == "object"
-      ? { function_calling_config: { mode: "ANY", allowed_function_names: [body.tool_choice.function?.name] } }
-      : {};
+        ? { function_calling_config: { mode: "ANY" } }
+        : body.tool_choice == "none"
+          ? { function_calling_config: { mode: "NONE" } }
+          : typeof body.tool_choice == "object"
+            ? {
+                function_calling_config: {
+                  mode: "ANY",
+                  allowed_function_names: [body.tool_choice.function?.name],
+                },
+              }
+            : {};
 
   // Convert function definitions to Gemini's tool format
   const tools = body.tools
@@ -88,7 +93,12 @@ export function gemini(body) {
 const geminiPartFromURL = (url) => {
   if (url.startsWith("data:")) {
     const [base, base64Data] = url.split(",");
-    return { inlineData: { mimeType: base.replace("data:", "").replace(";base64", ""), data: base64Data } };
+    return {
+      inlineData: {
+        mimeType: base.replace("data:", "").replace(";base64", ""),
+        data: base64Data,
+      },
+    };
   }
   return { fileData: { fileUri: url } };
 };
