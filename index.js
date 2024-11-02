@@ -5,6 +5,7 @@ import { asyncSSE } from "asyncsse";
  *
  * @param {Request} request
  * @param {RequestInit} options
+ * @param {SSEConfig} config
  * @returns {AsyncGenerator<Record<string, string>, void, unknown>}
  *
  * @example
@@ -18,19 +19,23 @@ import { asyncSSE } from "asyncsse";
  *     model: "gpt-3.5-turbo",
  *     messages: [{ role: "user", content: "Hello, world!" }],
  *   }),
+ * }, {
+ *   onResponse: async (response) => {
+ *     console.log(response.status, response.headers);
+ *   },
  * })) {
  *   console.log(event);
  * }
  */
-export async function* asyncLLM(request, options = {}) {
+export async function* asyncLLM(request, options = {}, config = {}) {
   let content, tool, args;
 
-  for await (const event of asyncSSE(request, options)) {
+  for await (const event of asyncSSE(request, options, config)) {
     // OpenAI and Cloudflare AI Workers use "[DONE]" to indicate the end of the stream
     if (event.data === "[DONE]") break;
 
-    if (!event.data) {
-      yield { error: "No data" };
+    if (event.error) {
+      yield event;
       continue;
     }
 

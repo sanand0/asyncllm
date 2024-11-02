@@ -1,10 +1,11 @@
-import { AsyncGenerator } from "asyncsse";
+import { SSEConfig } from "asyncsse";
 
 /**
  * asyncLLM yields events when streaming from a streaming LLM endpoint.
  *
  * @param request - The request URL or Request object
  * @param options - Optional request options
+ * @param config - Optional configuration object
  * @returns An AsyncGenerator that yields events
  *
  * @example
@@ -18,21 +19,24 @@ import { AsyncGenerator } from "asyncsse";
  *     model: "gpt-3.5-turbo",
  *     messages: [{ role: "user", content: "Hello, world!" }],
  *   }),
+ * }, {
+ *   onResponse: async (response) => {
+ *     console.log(response.status, response.headers);
+ *   },
  * })) {
  *   console.log(event);
  * }
  */
+export interface LLMEvent {
+  content?: string;
+  tool?: string;
+  args?: string;
+  error?: string;
+  message?: Record<string, unknown>;
+}
+
 export function asyncLLM(
   request: string | Request,
-  options?: RequestInit
-): AsyncGenerator<
-  {
-    content?: string;
-    tool?: string;
-    args?: string;
-    message?: Record<string, any>;
-    error?: string;
-  },
-  void,
-  unknown
->;
+  options?: RequestInit,
+  config?: SSEConfig
+): AsyncGenerator<LLMEvent, void, unknown>;

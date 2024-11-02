@@ -72,12 +72,14 @@ import { asyncLLM } from "asyncllm";
 
 ## API
 
-### `asyncLLM(request: string | Request, options?: RequestInit): AsyncGenerator<LLMEvent, void, unknown>`
+### `asyncLLM(request: string | Request, options?: RequestInit, config?: SSEConfig): AsyncGenerator<LLMEvent, void, unknown>`
 
 Fetches streaming responses from LLM providers and yields events.
 
 - `request`: The URL or Request object for the LLM API endpoint
 - `options`: Optional [fetch options](https://developer.mozilla.org/en-US/docs/Web/API/fetch#parameters)
+- `config`: Optional configuration object for SSE handling
+  - `onResponse`: Async callback function that receives the Response object before streaming begins. If the callback returns a promise, it will be awaited before continuing the stream.
 
 Returns an async generator that yields [`LLMEvent` objects](#llmevent).
 
@@ -120,14 +122,24 @@ const body = {
   ],
 };
 
-for await (const { content } of asyncLLM("https://api.openai.com/v1/chat/completions", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${apiKey}`,
+const config = {
+  onResponse: async (response) => {
+    console.log(response.status, response.headers);
   },
-  body: JSON.stringify(body),
-})) {
+};
+
+for await (const { content } of asyncLLM(
+  "https://api.openai.com/v1/chat/completions",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify(body),
+  },
+  config,
+)) {
   console.log(content);
 }
 ```
@@ -279,6 +291,7 @@ for await (const { content, error } of asyncLLM("https://api.openai.com/v1/chat/
 
 ## Changelog
 
+- 1.2.0: Added `config.onResponse(response)` that receives the Response object before streaming begins
 - 1.1.3: Ensure `max_tokens` for Anthropic. Improve error handling
 - 1.1.1: Added [Anthropic adapter](#anthropic)
 - 1.1.0: Added [Gemini adapter](#gemini)

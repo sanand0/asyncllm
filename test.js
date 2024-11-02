@@ -187,7 +187,7 @@ Deno.test("asyncLLM - OpenRouter", async () => {
 Deno.test("asyncLLM - Error handling", async () => {
   const results = await Array.fromAsync(asyncLLM(`${BASE_URL}/errors.txt`));
 
-  assertEquals(results.length, 5);
+  assertEquals(results.length, 6);
 
   // Malformed JSON
   assertEquals(results[0].error, "Unexpected token 'i', \"invalid json\" is not valid JSON");
@@ -203,4 +203,55 @@ Deno.test("asyncLLM - Error handling", async () => {
 
   // OpenRouter-style error
   assertEquals(results[4].error, "OpenRouter API error");
+
+  // No data
+  assertEquals(results[5].error, "Unexpected end of JSON input");
+});
+
+Deno.test("asyncLLM - Config callback", async () => {
+  let responseStatus = 0;
+  let contentType = "";
+
+  const results = await Array.fromAsync(
+    asyncLLM(
+      `${BASE_URL}/openai.txt`,
+      {},
+      {
+        onResponse: async (response) => {
+          responseStatus = response.status;
+          contentType = response.headers.get("Content-Type");
+        },
+      },
+    ),
+  );
+
+  assertEquals(responseStatus, 200);
+  assertEquals(contentType, "text/event-stream");
+  assertEquals(results.length, 10); // Verify normal operation still works
+});
+
+Deno.test("asyncLLM - Config callback error handling", async () => {
+  let responseStatus = 0;
+
+  const results = await Array.fromAsync(
+    asyncLLM(
+      `${BASE_URL}/errors.txt`,
+      {},
+      {
+        onResponse: async (response) => {
+          responseStatus = response.status;
+        },
+      },
+    ),
+  );
+
+  assertEquals(responseStatus, 200);
+  assertEquals(results[0].error, "Unexpected token 'i', \"invalid json\" is not valid JSON");
+});
+
+Deno.test("asyncLLM - Request object input", async () => {
+  const request = new Request(`${BASE_URL}/openai.txt`);
+  const results = await Array.fromAsync(asyncLLM(request));
+
+  assertEquals(results.length, 10);
 });
