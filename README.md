@@ -50,7 +50,8 @@ For example, to update the DOM with the LLM's response:
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: "gpt-4",
+        model: "gpt-4o-mini",
+        // You MUST enable streaming, else the API will return an {error}
         stream: true,
         messages: [{ role: "user", content: "Hello, world!" }],
       }),
@@ -79,6 +80,7 @@ Fetches streaming responses from LLM providers and yields events.
 - `request`: The URL or Request object for the LLM API endpoint
 - `options`: Optional [fetch options](https://developer.mozilla.org/en-US/docs/Web/API/fetch#parameters)
 - `config`: Optional configuration object for SSE handling
+  - `fetch`: Custom fetch implementation (defaults to global fetch)
   - `onResponse`: Async callback function that receives the Response object before streaming begins. If the callback returns a promise, it will be awaited before continuing the stream.
 
 Returns an async generator that yields [`LLMEvent` objects](#llmevent).
@@ -88,7 +90,8 @@ Returns an async generator that yields [`LLMEvent` objects](#llmevent).
 - `content`: The text content of the response
 - `tool`: The name of the tool being called (for function calling)
 - `args`: The arguments for the tool call (for function calling) as a JSON-encoded string, e.g. `{"order_id":"123456"}`
-- `message`: The raw message object from the LLM provider
+- `message`: The raw message object from the LLM provider (may include id, model, usage stats, etc.)
+- `error`: Error message if the request fails
 
 ## Examples
 
@@ -99,49 +102,29 @@ import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@1";
 
 const body = {
   model: "gpt-4o-mini",
+  // You MUST enable streaming, else the API will return an {error}
   stream: true,
-  messages: [
-    { role: "system", content: "You are a helpful assistant." },
-    { role: "user", content: "What is 2+2?" },
-  ],
-  temperature: 0.7,
-  max_tokens: 10,
-  tools: [
-    {
-      type: "function",
-      function: {
-        name: "get_weather",
-        description: "Get the weather for a location",
-        parameters: {
-          type: "object",
-          properties: { location: { type: "string" } },
-          required: ["location"],
-        },
-      },
-    },
-  ],
+  messages: [{ role: "user", content: "Hello, world!" }],
 };
 
-const config = {
-  onResponse: async (response) => {
-    console.log(response.status, response.headers);
-  },
-};
-
-for await (const { content } of asyncLLM(
-  "https://api.openai.com/v1/chat/completions",
-  {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify(body),
-  },
-  config,
-)) {
-  console.log(content);
+for await (const data of asyncLLM("https://api.openai.com/v1/chat/completions", {
+  method: "POST",
+  headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+  body: JSON.stringify(body),
+})) {
+  console.log(data);
 }
+```
+
+This will log something like this on the console:
+
+```js
+{ content: "", tool: undefined, args: undefined, message: { "id": "chatcmpl-...", ...} }
+{ content: "Hello", tool: undefined, args: undefined, message: { "id": "chatcmpl-...", ...} }
+{ content: "Hello!", tool: undefined, args: undefined, message: { "id": "chatcmpl-...", ...} }
+{ content: "Hello! How", tool: undefined, args: undefined, message: { "id": "chatcmpl-...", ...} }
+...
+{ content: "Hello! How can I assist you today?", tool: undefined, args: undefined, message: { "id": "chatcmpl-...", ...} }
 ```
 
 ### Anthropic
@@ -161,16 +144,17 @@ const body = anthropic({
 // Or you can use the asyncLLM() function directly with the Anthropic API endpoint.
 const body = {
   model: "claude-3-haiku-20240307",
+  // You MUST enable streaming, else the API will return an {error}
   stream: true,
   max_tokens: 10,
   messages: [{ role: "user", content: "What is 2 + 2" }],
 };
 
-for await (const { content } of asyncLLM("https://api.anthropic.com/v1/messages", {
+for await (const data of asyncLLM("https://api.anthropic.com/v1/messages", {
   headers: { "Content-Type": "application/json", "x-api-key": apiKey },
   body: JSON.stringify(body),
 })) {
-  console.log(content);
+  console.log(data);
 }
 ```
 
@@ -192,17 +176,18 @@ allowing you to use the same code structure across providers.
 import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@1";
 import { gemini } from "https://cdn.jsdelivr.net/npm/asyncllm@1/dist/gemini.js";
 
-// You can use the anthropic() adapter to convert OpenAI-style requests to Anthropic's format.
-const body = anthropic({
+// You can use the gemini() adapter to convert OpenAI-style requests to Gemini's format.
+const body = gemini({
   // Same as OpenAI example above
 });
 
-// Or you can use the asyncLLM() function directly with the Anthropic API endpoint.
+// Or you can use the asyncLLM() function directly with the Gemini API endpoint.
 const body = {
   contents: [{ role: "user", parts: [{ text: "What is 2+2?" }] }],
 };
 
-for await (const { content } of asyncLLM(
+for await (const data of asyncLLM(
+  // You MUST use a streaming endpoint, else the API will return an {error}
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:streamGenerateContent?alt=sse",
   {
     method: "POST",
@@ -213,7 +198,7 @@ for await (const { content } of asyncLLM(
     body: JSON.stringify(body),
   },
 )) {
-  console.log(content);
+  console.log(data);
 }
 ```
 
@@ -232,22 +217,20 @@ The Gemini adapter supports:
 asyncLLM supports function calling (aka tools). Here's an example with OpenAI:
 
 ```javascript
-for await (const { content, tool, args, error } of asyncLLM("https://api.openai.com/v1/chat/completions", {
+for await (const data of asyncLLM("https://api.openai.com/v1/chat/completions", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
     Authorization: `Bearer ${apiKey}`,
   },
   body: JSON.stringify({
-    model: "gpt-4",
+    model: "gpt-4o-mini",
     stream: true,
     messages: [
-      {
-        role: "system",
-        content: "Call get_delivery_date with the order ID.",
-      },
+      { role: "system", content: "Call get_delivery_date with the order ID." },
       { role: "user", content: "123456" },
     ],
+    tool_choice: "required",
     tools: [
       {
         type: "function",
@@ -256,12 +239,7 @@ for await (const { content, tool, args, error } of asyncLLM("https://api.openai.
           description: "Get the delivery date for a customer order.",
           parameters: {
             type: "object",
-            properties: {
-              order_id: {
-                type: "string",
-                description: "The customer order ID.",
-              },
-            },
+            properties: { order_id: { type: "string", description: "The customer order ID." } },
             required: ["order_id"],
           },
         },
@@ -269,11 +247,61 @@ for await (const { content, tool, args, error } of asyncLLM("https://api.openai.
     ],
   }),
 })) {
-  console.log(error ?? content, tool, args);
+  console.log(data.tool, data.args);
 }
 ```
 
-The `tool` and `args` properties are incrementally streamed until the LLM calls a tool.
+The `tool` and `args` properties are incrementally streamed, like this:
+
+```js
+{tool: 'get_delivery_date', args: '', content: undefined, message: { ... }}
+{tool: 'get_delivery_date', args: '{\n', content: undefined, message: { ... }}
+{tool: 'get_delivery_date', args: '{\n  "order_id":', content: undefined, message: { ... }}
+...
+{tool: 'get_delivery_date', args: '{\n  "order_id": "123456"\n}', content: undefined, message: { ... }}
+```
+
+- `tool` is the name of the tool being called.
+- `args` is JSON-encoded. Parse with a partial JSON parser like [partial-json](https://www.npmjs.com/package/partial-json).
+- **NOTE**: Multiple tool calls are not explicitly supported yet.
+
+### Config
+
+asyncLLM accepts a `config` object with the following properties:
+
+- `fetch`: Custom fetch implementation (defaults to global `fetch`).
+- `onResponse`: Async callback function that receives the Response object before streaming begins. If the callback returns a promise, it will be awaited before continuing the stream.
+
+Here's how you can use a custom fetch implementation:
+
+```javascript
+import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@1";
+
+const body = {
+  // Same as OpenAI example above
+};
+
+// Optional configuration. You can ignore it for most use cases.
+const config = {
+  onResponse: async (response) => {
+    console.log(response.status, response.headers);
+  },
+  // You can use a custom fetch implementation if needed
+  fetch: fetch,
+};
+
+for await (const { content } of asyncLLM(
+  "https://api.openai.com/v1/chat/completions",
+  {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+    body: JSON.stringify(body),
+  },
+  config,
+)) {
+  console.log(content);
+}
+```
 
 ### Error handling
 
@@ -289,8 +317,15 @@ for await (const { content, error } of asyncLLM("https://api.openai.com/v1/chat/
 }
 ```
 
+The `error` property is set if:
+
+- The underlying API (e.g. OpenAI, Anthropic, Gemini) returns an error in the response (e.g. `error.message` or `message.error` or `error`)
+- The fetch request fails (e.g. network error)
+- The response body cannot be parsed as JSON
+
 ## Changelog
 
+- 1.2.1: Added `config.fetch` for custom fetch implementation
 - 1.2.0: Added `config.onResponse(response)` that receives the Response object before streaming begins
 - 1.1.3: Ensure `max_tokens` for Anthropic. Improve error handling
 - 1.1.1: Added [Anthropic adapter](#anthropic)
