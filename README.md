@@ -303,6 +303,37 @@ for await (const { content } of asyncLLM(
 }
 ```
 
+## Streaming from text
+
+You can parse streamed SSE events from a text string (e.g. from a cached response) using the provided `fetchText` helper:
+
+```javascript
+import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@1";
+import { fetchText } from "https://cdn.jsdelivr.net/npm/asyncsse@1/dist/fetchtext.js";
+
+const text = `
+data: {"candidates": [{"content": {"parts": [{"text": "2"}],"role": "model"}}]}
+
+data: {"candidates": [{"content": {"parts": [{"text": " + 2 = 4\\n"}],"role": "model"}}]}
+
+data: {"candidates": [{"content": {"parts": [{"text": ""}],"role": "model"}}]}
+`;
+
+// Stream events from text
+for await (const event of asyncLLM(text, {}, { fetch: fetchText })) {
+  console.log(event);
+}
+```
+
+This outputs:
+
+```
+{ data: "Hello" }
+{ data: "World" }
+```
+
+This is particularly useful for testing SSE parsing without making actual HTTP requests.
+
 ### Error handling
 
 If an error occurs, it will be yielded in the `error` property. For example:
@@ -325,6 +356,7 @@ The `error` property is set if:
 
 ## Changelog
 
+- 1.2.2: Added streaming from text documentation via `config.fetch`. Upgrade to asyncSSE 1.3.1 (bug fix).
 - 1.2.1: Added `config.fetch` for custom fetch implementation
 - 1.2.0: Added `config.onResponse(response)` that receives the Response object before streaming begins
 - 1.1.3: Ensure `max_tokens` for Anthropic. Improve error handling

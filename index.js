@@ -43,7 +43,7 @@ export async function* asyncLLM(request, options = {}, config = {}) {
     try {
       message = JSON.parse(event.data);
     } catch (error) {
-      yield { error: error.message };
+      yield { error: error.message, data: event.data };
       continue;
     }
 
