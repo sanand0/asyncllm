@@ -50,7 +50,7 @@ For example, to update the DOM with the LLM's response:
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "gpt-4o-mini-mini",
         // You MUST enable streaming, else the API will return an {error}
         stream: true,
         messages: [{ role: "user", content: "Hello, world!" }],
@@ -217,7 +217,7 @@ The Gemini adapter supports:
 asyncLLM supports function calling (aka tools). Here's an example with OpenAI:
 
 ```javascript
-for await (const data of asyncLLM("https://api.openai.com/v1/chat/completions", {
+for await (const { tools } of asyncLLM("https://api.openai.com/v1/chat/completions", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
@@ -227,8 +227,8 @@ for await (const data of asyncLLM("https://api.openai.com/v1/chat/completions", 
     model: "gpt-4o-mini",
     stream: true,
     messages: [
-      { role: "system", content: "Call get_delivery_date with the order ID." },
-      { role: "user", content: "123456" },
+      { role: "system", content: "Get delivery date for order" },
+      { role: "user", content: "Order ID: 123456" },
     ],
     tool_choice: "required",
     tools: [
@@ -236,34 +236,30 @@ for await (const data of asyncLLM("https://api.openai.com/v1/chat/completions", 
         type: "function",
         function: {
           name: "get_delivery_date",
-          description: "Get the delivery date for a customer order.",
-          parameters: {
-            type: "object",
-            properties: { order_id: { type: "string", description: "The customer order ID." } },
-            required: ["order_id"],
-          },
+          parameters: { type: "object", properties: { order_id: { type: "string" } }, required: ["order_id"] },
         },
       },
     ],
   }),
 })) {
-  console.log(data.tool, data.args);
+  console.log(JSON.stringify(tools));
 }
 ```
 
-The `tool` and `args` properties are incrementally streamed, like this:
+`tools` is an array of objects with `name` and `args` properties. It streams like this:
 
-```js
-{tool: 'get_delivery_date', args: '', content: undefined, message: { ... }}
-{tool: 'get_delivery_date', args: '{\n', content: undefined, message: { ... }}
-{tool: 'get_delivery_date', args: '{\n  "order_id":', content: undefined, message: { ... }}
-...
-{tool: 'get_delivery_date', args: '{\n  "order_id": "123456"\n}', content: undefined, message: { ... }}
+```json
+[{"name":"get_delivery_date","args":""}]
+[{"name":"get_delivery_date","args":"{\""}]
+[{"name":"get_delivery_date","args":"{\"order"}]
+[{"name":"get_delivery_date","args":"{\"order_id"}]
+[{"name":"get_delivery_date","args":"{\"order_id\":\""}]
+[{"name":"get_delivery_date","args":"{\"order_id\":\"123"}]
+[{"name":"get_delivery_date","args":"{\"order_id\":\"123456"}]
+[{"name":"get_delivery_date","args":"{\"order_id\":\"123456\"}"}]
 ```
 
-- `tool` is the name of the tool being called.
-- `args` is JSON-encoded. Parse with a partial JSON parser like [partial-json](https://www.npmjs.com/package/partial-json).
-- **NOTE**: Multiple tool calls are not explicitly supported yet.
+Use a library like [partial-json](https://www.npmjs.com/package/partial-json) to parse the `args` incrementally.
 
 ### Config
 
@@ -356,6 +352,9 @@ The `error` property is set if:
 
 ## Changelog
 
+- 2.0.1: Multiple tools support.
+  - Breaking change: `tool` and `args` are not part of the response. Instead, it has `tools`, an array of `{ name, args }`
+  - Fixed Gemini adapter to return `toolConfig` instead of `toolsConfig`
 - 1.2.2: Added streaming from text documentation via `config.fetch`. Upgrade to asyncSSE 1.3.1 (bug fix).
 - 1.2.1: Added `config.fetch` for custom fetch implementation
 - 1.2.0: Added `config.onResponse(response)` that receives the Response object before streaming begins

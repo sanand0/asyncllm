@@ -145,7 +145,7 @@ Deno.test("gemini - tool calling configurations", () => {
 
   const expected = {
     contents: [{ role: "user", parts: [{ text: "Hi" }] }],
-    toolsConfig: { function_calling_config: { mode: "AUTO" } },
+    toolConfig: { function_calling_config: { mode: "AUTO" } },
     tools: {
       functionDeclarations: [
         {
@@ -172,7 +172,7 @@ Deno.test("gemini - specific tool choice", () => {
 
   const expected = {
     contents: [{ role: "user", parts: [{ text: "Hi" }] }],
-    toolsConfig: {
+    toolConfig: {
       function_calling_config: {
         mode: "ANY",
         allowed_function_names: ["get_weather"],
@@ -223,7 +223,7 @@ Deno.test("gemini - required tool choice", () => {
 
   const expected = {
     contents: [{ role: "user", parts: [{ text: "Hi" }] }],
-    toolsConfig: { function_calling_config: { mode: "ANY" } },
+    toolConfig: { function_calling_config: { mode: "ANY" } },
   };
 
   assertEquals(gemini(input), expected);
@@ -237,7 +237,7 @@ Deno.test("gemini - none tool choice", () => {
 
   const expected = {
     contents: [{ role: "user", parts: [{ text: "Hi" }] }],
-    toolsConfig: { function_calling_config: { mode: "NONE" } },
+    toolConfig: { function_calling_config: { mode: "NONE" } },
   };
 
   assertEquals(gemini(input), expected);

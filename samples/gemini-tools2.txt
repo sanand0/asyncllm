@@ -1,0 +1,5 @@
+data: {"candidates": [{"content": {"parts": [{"functionCall": {"name": "get_order","args": {"id": "123456"}}},{"functionCall": {"name": "get_customer","args": {"id": "7890"}}}],"role": "model"},"safetyRatings": [{"category": "HARM_CATEGORY_HATE_SPEECH","probability": "NEGLIGIBLE"},{"category": "HARM_CATEGORY_DANGEROUS_CONTENT","probability": "NEGLIGIBLE"},{"category": "HARM_CATEGORY_HARASSMENT","probability": "NEGLIGIBLE"},{"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT","probability": "NEGLIGIBLE"}]}],"usageMetadata": {"promptTokenCount": 104,"totalTokenCount": 104},"modelVersion": "gemini-1.5-flash-8b-001"}
+
+data: {"candidates": [{"content": {"parts": [{"text": ""}],"role": "model"},"avgLogprobs": "NaN"}],"usageMetadata": {"promptTokenCount": 104,"totalTokenCount": 104},"modelVersion": "gemini-1.5-flash-8b-001"}
+
+data: {"candidates": [{"content": {"parts": [{"text": ""}],"role": "model"},"finishReason": "STOP"}],"usageMetadata": {"promptTokenCount": 104,"candidatesTokenCount": 18,"totalTokenCount": 122},"modelVersion": "gemini-1.5-flash-8b-001"}

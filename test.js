@@ -31,8 +31,7 @@ Deno.test("asyncLLM - OpenAI", async () => {
   assertEquals(results[0].content, "");
   assertEquals(results[1].content, "Hello");
   assertEquals(results[9].content, "Hello! How can I assist you today?");
-  assertEquals(results.at(-1).tool, undefined);
-  assertEquals(results.at(-1).args, undefined);
+  assertEquals(results.at(-1).tools, undefined);
 });
 
 /*
@@ -64,16 +63,58 @@ curl -X POST https://llmfoundry.straive.com/openai/v1/chat/completions \
 }'
 */
 Deno.test("asyncLLM - OpenAI with tool calls", async () => {
-  const results = await Array.fromAsync(asyncLLM(`${BASE_URL}/openai-tools.txt`));
+  let index = 0;
+  let data = {};
+  for await (data of asyncLLM(`${BASE_URL}/openai-tools.txt`)) {
+    if (index == 0) assertEquals(data.tools[0].name, "get_delivery_date");
+    if (index == 0) assertEquals(data.tools[0].args, "");
+    if (index == 1) assertEquals(data.tools[0].args, '{"');
+    if (index == 7) assertEquals(data.tools[0].args, '{"order_id":"123456"}');
+    if (index == 7) assertEquals(data.content, undefined);
+    index++;
+  }
+  assertEquals(JSON.parse(data.tools[0].args), { order_id: "123456" });
+  assertEquals(index, 8);
+});
 
-  assertEquals(results.length, 8);
-  assertEquals(results[0].tool, "get_delivery_date");
-  assertEquals(results[0].args, "");
-  assertEquals(results[1].args, '{"');
-  assertEquals(results[7].args, '{"order_id":"123456"}');
-  assertEquals(results[7].content, undefined);
-
-  assertEquals(JSON.parse(results.at(-1).args), { order_id: "123456" });
+/*
+curl -X POST https://llmfoundry.straive.com/openai/v1/chat/completions \
+  -H "Authorization: Bearer $LLMFOUNDRY_TOKEN:asyncllm" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-4o-mini",
+    "stream": true,
+    "messages": [
+      { "role": "system", "content": "Call get_order({order_id}) AND get_customer({customer_id}) in parallel" },
+      { "role": "user", "content": "Order ID: 123456, Customer ID: 7890" }
+    ],
+    "tool_choice": "required",
+    "tools": [
+      {
+        "type": "function",
+        "function": { "name": "get_order", "parameters": { "type": "object", "properties": { "id": { "type": "string" } }, "required": ["id"] } }
+      },
+      {
+        "type": "function",
+        "function": { "name": "get_customer", "parameters": { "type": "object", "properties": { "id": { "type": "string" } }, "required": ["id"] } }
+      }
+    ]
+  }
+}
+*/
+Deno.test("asyncLLM - OpenAI with multiple tool calls", async () => {
+  let index = 0;
+  let data = {};
+  for await (data of asyncLLM(`${BASE_URL}/openai-tools2.txt`)) {
+    if (index === 0) assertEquals(data.tools[0], { name: "get_order", args: "" });
+    if (index === 5) assertEquals(data.tools[0].args, '{"id": "123456"}');
+    if (index === 6) assertEquals(data.tools[1], { name: "get_customer", args: '{"id' });
+    if (index === 9) assertEquals(data.tools[1].args, '{"id": "7890"}');
+    index++;
+  }
+  assertEquals(index, 9);
+  assertEquals(data.tools[0], { name: "get_order", args: '{"id": "123456"}' });
+  assertEquals(data.tools[1], { name: "get_customer", args: '{"id": "7890"}' });
 });
 
 /*
@@ -89,23 +130,54 @@ Deno.test("asyncLLM - Anthropic", async () => {
   assertEquals(results[0].content, "2 ");
   assertEquals(results[1].content, "2 + 2 ");
   assertEquals(results[2].content, "2 + 2 = 4.");
-  assertEquals(results.at(-1).tool, undefined);
-  assertEquals(results.at(-1).args, undefined);
+  assertEquals(results.at(-1).tools, undefined);
 });
 
 Deno.test("asyncLLM - Anthropic with tool calls", async () => {
-  const results = await Array.fromAsync(asyncLLM(`${BASE_URL}/anthropic-tools.txt`));
+  let index = 0;
+  let data = {};
+  for await (data of asyncLLM(`${BASE_URL}/anthropic-tools.txt`)) {
+    if (index === 0) assertEquals(data.content, "Okay");
+    if (index === 12) assertEquals(data.content, "Okay, let's check the weather for San Francisco, CA:");
+    if (index === 13) assertEquals(data.tools[0].name, "get_weather");
+    if (index === 14) assertEquals(data.tools[0].args, "");
+    index++;
+  }
+  assertEquals(data.tools[0].name, "get_weather");
+  assertEquals(JSON.parse(data.tools[0].args), { location: "San Francisco, CA", unit: "fahrenheit" });
+  assertEquals(index, 23);
+});
 
-  assertEquals(results.length, 23);
-  assertEquals(results[0].content, "Okay");
-  assertEquals(results[12].content, "Okay, let's check the weather for San Francisco, CA:");
-  assertEquals(results[13].tool, "get_weather");
-  assertEquals(results[14].args, "");
-  assertEquals(results.at(-1).tool, "get_weather");
-  assertEquals(JSON.parse(results.at(-1).args), {
-    location: "San Francisco, CA",
-    unit: "fahrenheit",
-  });
+/*
+curl -X POST https://llmfoundry.straive.com/anthropic/v1/messages \
+  -H "Authorization: Bearer $LLMFOUNDRY_TOKEN:asyncllm" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "system": "Call get_order({order_id}) AND get_customer({customer_id}) in parallel",
+    "messages": [{ "role": "user", "content": "Order ID: 123456, Customer ID: 7890" }],
+    "model": "claude-3-haiku-20240307",
+    "max_tokens": 4096,
+    "stream": true,
+    "tool_choice": { "type": "any", "disable_parallel_tool_use": false },
+    "tools": [
+      { "name": "get_order", "input_schema": { "type": "object", "properties": { "id": { "type": "string" } }, "required": ["id"] } },
+      { "name": "get_customer", "input_schema": { "type": "object", "properties": { "id": { "type": "string" } }, "required": ["id"] } }
+    ]
+  }
+}`
+*/
+Deno.test("asyncLLM - Anthropic with multiple tool calls", async () => {
+  let index = 0;
+  let data = {};
+  for await (data of asyncLLM(`${BASE_URL}/anthropic-tools2.txt`)) {
+    if (index === 0) assertEquals(data.tools[0], { name: "get_order" });
+    if (index === 2) assertEquals(data.tools[0].args, '{"id": "1');
+    if (index === 7) assertEquals(data.tools[1], { name: "get_customer", args: '{"id": "789' });
+    index++;
+  }
+  assertEquals(index, 9);
+  assertEquals(data.tools[0], { name: "get_order", args: '{"id": "123456"}' });
+  assertEquals(data.tools[1], { name: "get_customer", args: '{"id": "7890"}' });
 });
 
 /*
@@ -124,8 +196,7 @@ Deno.test("asyncLLM - Gemini", async () => {
   assertEquals(results[0].content, "2");
   assertEquals(results[1].content, "2 + 2 = 4\n");
   assertEquals(results[2].content, "2 + 2 = 4\n");
-  assertEquals(results.at(-1).tool, undefined);
-  assertEquals(results.at(-1).args, undefined);
+  assertEquals(results.at(-1).tools, undefined);
 });
 
 /*
@@ -152,15 +223,57 @@ curl -X POST https://llmfoundry.straive.com/gemini/v1beta/models/gemini-1.5-flas
 }'
 */
 Deno.test("asyncLLM - Gemini with tool calls", async () => {
-  const results = await Array.fromAsync(asyncLLM(`${BASE_URL}/gemini-tools.txt`));
+  let index = 0;
+  let data = {};
+  for await (data of asyncLLM(`${BASE_URL}/gemini-tools.txt`)) {
+    if (index === 0) assertEquals(data.tools[0].name, "take_notes");
+    if (index === 0) assertEquals(data.tools[0].args.startsWith('{"note":"Capitalism'), true);
+    index++;
+  }
+  assertEquals(data.content, undefined);
+  assertEquals(JSON.parse(data.tools[0].args).note.startsWith("Capitalism and socialism"), true);
+  assertEquals(JSON.parse(data.tools[0].args).note.endsWith("specific circumstances and values."), true);
+  assertEquals(index, 1);
+});
 
-  assertEquals(results.length, 1);
-  assertEquals(results[0].tool, "take_notes");
-  const args = JSON.parse(results[0].args);
-  assertEquals(typeof args, "object");
-  assertEquals(args.note.startsWith("Capitalism and socialism"), true);
-  assertEquals(args.note.endsWith("specific circumstances and values."), true);
-  assertEquals(results[0].content, undefined);
+/*
+curl -X POST https://llmfoundry.straive.com/gemini/v1beta/models/gemini-1.5-flash-latest:streamGenerateContent?alt=sse \
+  -H "Authorization: Bearer $LLMFOUNDRY_TOKEN:asyncllm" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "systemInstruction": {"parts": [{"text": "Call get_order({order_id}) AND get_customer({customer_id}) in parallel"}]},
+    "contents": [{"role": "user", "parts": [{ "text": "Order ID: 123456, Customer ID: 7890" }] }],
+    "toolConfig": { "function_calling_config": { "mode": "ANY" } },
+    "tools": {
+      "functionDeclarations": [
+        {
+          "name": "get_order",
+          "parameters": { "type": "object", "properties": { "id": { "type": "string" } }, "required": ["id"] }
+        },
+        {
+          "name": "get_customer",
+          "parameters": { "type": "object", "properties": { "id": { "type": "string" } }, "required": ["id"] }
+        }
+      ]
+    }
+  }
+}`
+*/
+Deno.test("asyncLLM - Gemini with multiple tool calls", async () => {
+  let index = 0;
+  let data = {};
+  for await (data of asyncLLM(`${BASE_URL}/gemini-tools2.txt`)) {
+    if (index === 0) {
+      assertEquals(data.tools[0], { name: "get_order", args: '{"id":"123456"}' });
+      assertEquals(data.tools[1], { name: "get_customer", args: '{"id":"7890"}' });
+    }
+    index++;
+  }
+  assertEquals(index, 3);
+  assertEquals(data.tools[0].name, "get_order");
+  assertEquals(JSON.parse(data.tools[0].args), { id: "123456" });
+  assertEquals(data.tools[1].name, "get_customer");
+  assertEquals(JSON.parse(data.tools[1].args), { id: "7890" });
 });
 
 /*
@@ -180,8 +293,7 @@ Deno.test("asyncLLM - OpenRouter", async () => {
     results.at(-1).content,
     " The sum of 2 and 2 is 4. This is a basic arithmetic operation where you add the two numbers together to get the total. \n\nHere's the calculation:\n\n2 + 2 = 4\n\nSo, the answer to your question is 4.",
   );
-  assertEquals(results.at(-1).tool, undefined);
-  assertEquals(results.at(-1).args, undefined);
+  assertEquals(results.at(-1).tools, undefined);
 });
 
 Deno.test("asyncLLM - Error handling", async () => {

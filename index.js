@@ -28,7 +28,8 @@ import { asyncSSE } from "asyncsse";
  * }
  */
 export async function* asyncLLM(request, options = {}, config = {}) {
-  let content, tool, args;
+  let content,
+    tools = [];
 
   for await (const event of asyncSSE(request, options, config)) {
     // OpenAI and Cloudflare AI Workers use "[DONE]" to indicate the end of the stream
@@ -60,36 +61,58 @@ export async function* asyncLLM(request, options = {}, config = {}) {
     let hasNewData = false;
     for (const parser of Object.values(providers)) {
       const extract = parser(message);
-      hasNewData = !isEmpty(extract.content) || !isEmpty(extract.tool) || !isEmpty(extract.args);
+      hasNewData = !isEmpty(extract.content) || extract.tools.length > 0;
       if (!isEmpty(extract.content)) content = (content ?? "") + extract.content;
-      if (!isEmpty(extract.tool)) tool = extract.tool;
-      if (!isEmpty(extract.args)) args = (args ?? "") + extract.args;
+      for (const { name, args } of extract.tools) {
+        if (!isEmpty(name)) tools.push({ name });
+        if (!isEmpty(args)) {
+          if (!tools.length) tools.push({});
+          const latestTool = tools.at(-1);
+          latestTool.args = (latestTool.args ?? "") + args;
+        }
+      }
       if (hasNewData) break;
     }
 
-    if (hasNewData) yield { content, tool, args, message };
+    if (hasNewData) {
+      const data = { content, message };
+      if (!isEmpty(content)) data.content = content;
+      if (tools.length) data.tools = tools;
+      yield data;
+    }
   }
 }
 
+// Return the delta from each message as { content, tools }
+// content delta is string | undefined
+// tools delta is [{ name?: string, args?: string }] | []
 const providers = {
   // Azure, OpenRouter, Groq, and a few others follow OpenAI's format
   openai: (m) => ({
     content: m.choices?.[0]?.delta?.content,
-    tool: m.choices?.[0]?.delta?.tool_calls?.[0]?.function?.name,
-    args: m.choices?.[0]?.delta?.tool_calls?.[0]?.function?.arguments,
+    tools: (m.choices?.[0]?.delta?.tool_calls ?? []).map((tool) => ({
+      name: tool.function.name,
+      args: tool.function.arguments,
+    })),
   }),
   anthropic: (m) => ({
     content: m.delta?.text,
-    tool: m.content_block?.name,
-    args: m.delta?.partial_json,
+    tools: !isEmpty(m.content_block?.name)
+      ? [{ name: m.content_block.name }]
+      : !isEmpty(m.delta?.partial_json)
+        ? [{ args: m.delta?.partial_json }]
+        : [],
   }),
   gemini: (m) => ({
     content: m.candidates?.[0]?.content?.parts?.[0]?.text,
-    tool: m.candidates?.[0]?.content?.parts?.[0]?.functionCall?.name,
-    args: JSON.stringify(m.candidates?.[0]?.content?.parts?.[0]?.functionCall?.args),
+    tools: (m.candidates?.[0]?.content?.parts ?? [])
+      .map((part) => part.functionCall)
+      .filter((d) => d)
+      .map((d) => ({ name: d.name, args: JSON.stringify(d.args) })),
   }),
   cloudflare: (m) => ({
     content: m.response,
+    tools: [],
   }),
 };
 

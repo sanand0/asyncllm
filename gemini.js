@@ -52,7 +52,7 @@ export function gemini(body) {
   };
 
   // Convert OpenAI tool_choice to Gemini's function calling modes
-  const toolsConfig =
+  const toolConfig =
     body.tool_choice == "auto"
       ? { function_calling_config: { mode: "AUTO" } }
       : body.tool_choice == "required"
@@ -84,7 +84,7 @@ export function gemini(body) {
     ...systemInstruction,
     contents,
     ...(Object.keys(generationConfig).length > 0 ? { generationConfig } : {}),
-    ...(body.tool_choice ? { toolsConfig } : {}),
+    ...(body.tool_choice ? { toolConfig } : {}),
     ...(body.tools ? { tools } : {}),
   };
 }
