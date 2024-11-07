@@ -88,8 +88,10 @@ Returns an async generator that yields [`LLMEvent` objects](#llmevent).
 #### LLMEvent
 
 - `content`: The text content of the response
-- `tool`: The name of the tool being called (for function calling)
-- `args`: The arguments for the tool call (for function calling) as a JSON-encoded string, e.g. `{"order_id":"123456"}`
+- `tools`: Array of tool call objects with:
+  - `name`: The name of the tool being called
+  - `args`: The arguments for the tool call as a JSON-encoded string, e.g. `{"order_id":"123456"}`
+  - `id`: Optional unique identifier for the tool call (e.g. OpenAI's `call_F8YHCjnzrrTjfE4YSSpVW2Bc` or Anthropic's `toolu_01T1x1fJ34qAmk2tNTrN7Up6`. Gemini does not return an id.)
 - `message`: The raw message object from the LLM provider (may include id, model, usage stats, etc.)
 - `error`: Error message if the request fails
 
@@ -246,17 +248,17 @@ for await (const { tools } of asyncLLM("https://api.openai.com/v1/chat/completio
 }
 ```
 
-`tools` is an array of objects with `name` and `args` properties. It streams like this:
+`tools` is an array of objects with `name`, `id` (for Anthropic and OpenAI, not Gemini), and `args` properties. It streams like this:
 
 ```json
-[{"name":"get_delivery_date","args":""}]
-[{"name":"get_delivery_date","args":"{\""}]
-[{"name":"get_delivery_date","args":"{\"order"}]
-[{"name":"get_delivery_date","args":"{\"order_id"}]
-[{"name":"get_delivery_date","args":"{\"order_id\":\""}]
-[{"name":"get_delivery_date","args":"{\"order_id\":\"123"}]
-[{"name":"get_delivery_date","args":"{\"order_id\":\"123456"}]
-[{"name":"get_delivery_date","args":"{\"order_id\":\"123456\"}"}]
+[{"name":"get_delivery_date","id":"call_F8YHCjnzrrTjfE4YSSpVW2Bc","args":""}]
+[{"name":"get_delivery_date","id":"call_F8YHCjnzrrTjfE4YSSpVW2Bc","args":"{\""}]
+[{"name":"get_delivery_date","id":"call_F8YHCjnzrrTjfE4YSSpVW2Bc","args":"{\"order"}]
+[{"name":"get_delivery_date","id":"call_F8YHCjnzrrTjfE4YSSpVW2Bc","args":"{\"order_id"}]
+[{"name":"get_delivery_date","id":"call_F8YHCjnzrrTjfE4YSSpVW2Bc","args":"{\"order_id\":\""}]
+[{"name":"get_delivery_date","id":"call_F8YHCjnzrrTjfE4YSSpVW2Bc","args":"{\"order_id\":\"123"}]
+[{"name":"get_delivery_date","id":"call_F8YHCjnzrrTjfE4YSSpVW2Bc","args":"{\"order_id\":\"123456"}]
+[{"name":"get_delivery_date","id":"call_F8YHCjnzrrTjfE4YSSpVW2Bc","args":"{\"order_id\":\"123456\"}"}]
 ```
 
 Use a library like [partial-json](https://www.npmjs.com/package/partial-json) to parse the `args` incrementally.
@@ -352,6 +354,7 @@ The `error` property is set if:
 
 ## Changelog
 
+- 2.1.0: Added `id` to tools to support unique tool call identifiers from providers
 - 2.0.1: Multiple tools support.
   - Breaking change: `tool` and `args` are not part of the response. Instead, it has `tools`, an array of `{ name, args }`
   - Fixed Gemini adapter to return `toolConfig` instead of `toolsConfig`

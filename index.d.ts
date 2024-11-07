@@ -1,6 +1,7 @@
 import { SSEConfig } from "asyncsse";
 
 export interface LLMTool {
+  id?: string;
   name?: string;
   args?: string;
 }

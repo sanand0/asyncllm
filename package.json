@@ -1,6 +1,6 @@
 {
   "name": "asyncllm",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Fetch streaming LLM responses as an async iterable",
   "main": "dist/asyncllm.js",
   "type": "module",

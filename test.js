@@ -66,8 +66,11 @@ Deno.test("asyncLLM - OpenAI with tool calls", async () => {
   let index = 0;
   let data = {};
   for await (data of asyncLLM(`${BASE_URL}/openai-tools.txt`)) {
-    if (index == 0) assertEquals(data.tools[0].name, "get_delivery_date");
-    if (index == 0) assertEquals(data.tools[0].args, "");
+    if (index == 0) {
+      assertEquals(data.tools[0].name, "get_delivery_date");
+      assertEquals(data.tools[0].id, "call_F8YHCjnzrrTjfE4YSSpVW2Bc");
+      assertEquals(data.tools[0].args, "");
+    }
     if (index == 1) assertEquals(data.tools[0].args, '{"');
     if (index == 7) assertEquals(data.tools[0].args, '{"order_id":"123456"}');
     if (index == 7) assertEquals(data.content, undefined);
@@ -106,15 +109,27 @@ Deno.test("asyncLLM - OpenAI with multiple tool calls", async () => {
   let index = 0;
   let data = {};
   for await (data of asyncLLM(`${BASE_URL}/openai-tools2.txt`)) {
-    if (index === 0) assertEquals(data.tools[0], { name: "get_order", args: "" });
+    if (index === 0) {
+      assertEquals(data.tools[0], {
+        name: "get_order",
+        id: "call_wnH2cswb4JAnm69pUAP4MNEN",
+        args: "",
+      });
+    }
     if (index === 5) assertEquals(data.tools[0].args, '{"id": "123456"}');
-    if (index === 6) assertEquals(data.tools[1], { name: "get_customer", args: '{"id' });
+    if (index === 6) {
+      assertEquals(data.tools[1], {
+        name: "get_customer",
+        id: "call_f4GVABhbwSOLoaisOBOajnsm",
+        args: '{"id',
+      });
+    }
     if (index === 9) assertEquals(data.tools[1].args, '{"id": "7890"}');
     index++;
   }
   assertEquals(index, 9);
-  assertEquals(data.tools[0], { name: "get_order", args: '{"id": "123456"}' });
-  assertEquals(data.tools[1], { name: "get_customer", args: '{"id": "7890"}' });
+  assertEquals(data.tools[0], { name: "get_order", id: "call_wnH2cswb4JAnm69pUAP4MNEN", args: '{"id": "123456"}' });
+  assertEquals(data.tools[1], { name: "get_customer", id: "call_f4GVABhbwSOLoaisOBOajnsm", args: '{"id": "7890"}' });
 });
 
 /*
@@ -139,12 +154,16 @@ Deno.test("asyncLLM - Anthropic with tool calls", async () => {
   for await (data of asyncLLM(`${BASE_URL}/anthropic-tools.txt`)) {
     if (index === 0) assertEquals(data.content, "Okay");
     if (index === 12) assertEquals(data.content, "Okay, let's check the weather for San Francisco, CA:");
-    if (index === 13) assertEquals(data.tools[0].name, "get_weather");
+    if (index === 13) assertEquals(data.tools[0], { name: "get_weather", id: "toolu_01T1x1fJ34qAmk2tNTrN7Up6" });
     if (index === 14) assertEquals(data.tools[0].args, "");
     index++;
   }
   assertEquals(data.tools[0].name, "get_weather");
-  assertEquals(JSON.parse(data.tools[0].args), { location: "San Francisco, CA", unit: "fahrenheit" });
+  assertEquals(data.tools[0].id, "toolu_01T1x1fJ34qAmk2tNTrN7Up6");
+  assertEquals(JSON.parse(data.tools[0].args), {
+    location: "San Francisco, CA",
+    unit: "fahrenheit",
+  });
   assertEquals(index, 23);
 });
 
@@ -170,14 +189,15 @@ Deno.test("asyncLLM - Anthropic with multiple tool calls", async () => {
   let index = 0;
   let data = {};
   for await (data of asyncLLM(`${BASE_URL}/anthropic-tools2.txt`)) {
-    if (index === 0) assertEquals(data.tools[0], { name: "get_order" });
+    if (index === 0) assertEquals(data.tools[0], { name: "get_order", id: "toolu_015yB3TjTS1RBaM7VScM2MQY" });
     if (index === 2) assertEquals(data.tools[0].args, '{"id": "1');
-    if (index === 7) assertEquals(data.tools[1], { name: "get_customer", args: '{"id": "789' });
+    if (index === 7)
+      assertEquals(data.tools[1], { name: "get_customer", id: "toolu_013VAZTYqMJm2JuRCqEA4kam", args: '{"id": "789' });
     index++;
   }
   assertEquals(index, 9);
-  assertEquals(data.tools[0], { name: "get_order", args: '{"id": "123456"}' });
-  assertEquals(data.tools[1], { name: "get_customer", args: '{"id": "7890"}' });
+  assertEquals(data.tools[0], { name: "get_order", id: "toolu_015yB3TjTS1RBaM7VScM2MQY", args: '{"id": "123456"}' });
+  assertEquals(data.tools[1], { name: "get_customer", id: "toolu_013VAZTYqMJm2JuRCqEA4kam", args: '{"id": "7890"}' });
 });
 
 /*

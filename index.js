@@ -31,6 +31,11 @@ export async function* asyncLLM(request, options = {}, config = {}) {
   let content,
     tools = [];
 
+  function latestTool() {
+    if (!tools.length) tools.push({});
+    return tools.at(-1);
+  }
+
   for await (const event of asyncSSE(request, options, config)) {
     // OpenAI and Cloudflare AI Workers use "[DONE]" to indicate the end of the stream
     if (event.data === "[DONE]") break;
@@ -63,12 +68,15 @@ export async function* asyncLLM(request, options = {}, config = {}) {
       const extract = parser(message);
       hasNewData = !isEmpty(extract.content) || extract.tools.length > 0;
       if (!isEmpty(extract.content)) content = (content ?? "") + extract.content;
-      for (const { name, args } of extract.tools) {
-        if (!isEmpty(name)) tools.push({ name });
+      for (const { name, args, id } of extract.tools) {
+        if (!isEmpty(name)) {
+          const tool = { name };
+          if (!isEmpty(id)) tool.id = id;
+          tools.push(tool);
+        }
         if (!isEmpty(args)) {
-          if (!tools.length) tools.push({});
-          const latestTool = tools.at(-1);
-          latestTool.args = (latestTool.args ?? "") + args;
+          const tool = latestTool();
+          tool.args = (tool.args ?? "") + args;
         }
       }
       if (hasNewData) break;
@@ -91,6 +99,7 @@ const providers = {
   openai: (m) => ({
     content: m.choices?.[0]?.delta?.content,
     tools: (m.choices?.[0]?.delta?.tool_calls ?? []).map((tool) => ({
+      id: tool.id,
       name: tool.function.name,
       args: tool.function.arguments,
     })),
@@ -98,7 +107,7 @@ const providers = {
   anthropic: (m) => ({
     content: m.delta?.text,
     tools: !isEmpty(m.content_block?.name)
-      ? [{ name: m.content_block.name }]
+      ? [{ name: m.content_block.name, id: m.content_block.id }]
       : !isEmpty(m.delta?.partial_json)
         ? [{ args: m.delta?.partial_json }]
         : [],
