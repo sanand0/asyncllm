@@ -3,11 +3,11 @@
 [![npm version](https://img.shields.io/npm/v/asyncllm.svg)](https://www.npmjs.com/package/asyncllm)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Fetch LLM responses as an async iterable.
+Fetch LLM responses across multiple providers as an async iterable.
 
 ## Features
 
-- 🚀 Lightweight (<2KB) and dependency-free
+- 🚀 Lightweight (~2KB) and dependency-free
 - 🔄 Works with multiple LLM providers (OpenAI, Anthropic, Gemini, and more)
 - 🌐 Browser and Node.js compatible
 - 📦 Easy to use with ES modules
@@ -18,7 +18,79 @@ Fetch LLM responses as an async iterable.
 npm install asyncllm
 ```
 
-## Usage
+## Anthropic and Gemini Adapters
+
+Adapters convert OpenAI-style request bodies to the [Anthropic](https://docs.anthropic.com/en/api/messages) or [Gemini](https://ai.google.dev/gemini-api/docs/text-generation?lang=rest) formats. For example:
+
+```javascript
+import { anthropic } from "https://cdn.jsdelivr.net/npm/asyncllm@2/dist/anthropic.js";
+import { gemini } from "https://cdn.jsdelivr.net/npm/asyncllm@2/dist/gemini.js";
+
+// Create an OpenAI-style request
+const body = {
+  messages: [{ role: "user", content: "Hello, world!" }],
+  temperature: 0.5,
+};
+
+// Fetch request with the Anthropic API
+const anthropicResponse = await fetch("https://api.anthropic.com/v1/messages", {
+  method: "POST",
+  headers: { "Content-Type": "application/json", "x-api-key": "YOUR_API_KEY" },
+  // anthropic() converts the OpenAI-style request to Anthropic's format
+  body: JSON.stringify(anthropic({ ...body, model: "claude-3-haiku-20240307" })),
+}).then((r) => r.json());
+
+// Fetch request with the Gemini API
+const geminiResponse = await fetch(
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent",
+  {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer YOUR_API_KEY` },
+    // gemini() converts the OpenAI-style request to Gemini's format
+    body: JSON.stringify(gemini(body)),
+  },
+).then((r) => r.json());
+```
+
+Here are the parameters supported by each provider.
+
+| OpenAI Parameter                    | Anthropic | Gemini |
+| ----------------------------------- | --------- | ------ |
+| messages                            | Y         | Y      |
+| system message                      | Y         | Y      |
+| temperature                         | Y         | Y      |
+| max_tokens                          | Y         | Y      |
+| top_p                               | Y         | Y      |
+| stop sequences                      | Y         | Y      |
+| stream                              | Y         | Y      |
+| presence_penalty                    |           | Y      |
+| frequency_penalty                   |           | Y      |
+| logprobs                            |           | Y      |
+| top_logprobs                        |           | Y      |
+| n (multiple candidates)             |           | Y      |
+| metadata.user_id                    | Y         |        |
+| tools/functions                     | Y         | Y      |
+| tool_choice                         | Y         | Y      |
+| parallel_tool_calls                 | Y         |        |
+| response_format.type: "json_object" |           | Y      |
+| response_format.type: "json_schema" |           | Y      |
+
+Content types:
+
+| OpenAI | Anthropic | Gemini |
+| ------ | --------- | ------ |
+| Text   | Y         | Y      |
+| Images | Y         | Y      |
+| Audio  |           | Y      |
+
+Image Sources
+
+| OpenAI Parameter | Anthropic | Gemini |
+| ---------------- | --------- | ------ |
+| Data URI         | Y         | Y      |
+| External URLs    |           | Y      |
+
+## Streaming
 
 Call `asyncLLM()` just like you would use `fetch` with any LLM provider with streaming responses.
 
@@ -38,7 +110,7 @@ For example, to update the DOM with the LLM's response:
   </body>
 
   <script type="module">
-    import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@1";
+    import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@2";
 
     const apiKey = "YOUR_API_KEY";
 
@@ -71,36 +143,12 @@ import { asyncLLM } from "asyncllm";
 // Usage is the same as in the browser example
 ```
 
-## API
-
-### `asyncLLM(request: string | Request, options?: RequestInit, config?: SSEConfig): AsyncGenerator<LLMEvent, void, unknown>`
-
-Fetches streaming responses from LLM providers and yields events.
-
-- `request`: The URL or Request object for the LLM API endpoint
-- `options`: Optional [fetch options](https://developer.mozilla.org/en-US/docs/Web/API/fetch#parameters)
-- `config`: Optional configuration object for SSE handling
-  - `fetch`: Custom fetch implementation (defaults to global fetch)
-  - `onResponse`: Async callback function that receives the Response object before streaming begins. If the callback returns a promise, it will be awaited before continuing the stream.
-
-Returns an async generator that yields [`LLMEvent` objects](#llmevent).
-
-#### LLMEvent
-
-- `content`: The text content of the response
-- `tools`: Array of tool call objects with:
-  - `name`: The name of the tool being called
-  - `args`: The arguments for the tool call as a JSON-encoded string, e.g. `{"order_id":"123456"}`
-  - `id`: Optional unique identifier for the tool call (e.g. OpenAI's `call_F8YHCjnzrrTjfE4YSSpVW2Bc` or Anthropic's `toolu_01T1x1fJ34qAmk2tNTrN7Up6`. Gemini does not return an id.)
-- `message`: The raw message object from the LLM provider (may include id, model, usage stats, etc.)
-- `error`: Error message if the request fails
-
 ## Examples
 
-### OpenAI
+### OpenAI streaming
 
 ```javascript
-import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@1";
+import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@2";
 
 const body = {
   model: "gpt-4o-mini",
@@ -129,14 +177,14 @@ This will log something like this on the console:
 { content: "Hello! How can I assist you today?", tool: undefined, args: undefined, message: { "id": "chatcmpl-...", ...} }
 ```
 
-### Anthropic
+### Anthropic streaming
 
 The package includes an Anthropic adapter that converts OpenAI-style requests to Anthropic's format,
 allowing you to use the same code structure across providers.
 
 ```javascript
-import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@1";
-import { anthropic } from "https://cdn.jsdelivr.net/npm/asyncllm@1/dist/anthropic.js";
+import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@2";
+import { anthropic } from "https://cdn.jsdelivr.net/npm/asyncllm@2/dist/anthropic.js";
 
 // You can use the anthropic() adapter to convert OpenAI-style requests to Anthropic's format.
 const body = anthropic({
@@ -160,23 +208,14 @@ for await (const data of asyncLLM("https://api.anthropic.com/v1/messages", {
 }
 ```
 
-The Anthropic adapter supports:
-
-- System messages
-- Multi-modal content (text and images only, no audio support)
-- Model parameters (temperature, max_tokens, top_p, stop, metadata.user_id, but not n, presence_penalty, frequency_penalty, logprobs, top_logprobs)
-- User metadata
-- Function/tool calling with parallel execution control
-- Stop sequences
-
-### Gemini
+### Gemini streaming
 
 The package includes a Gemini adapter that converts OpenAI-style requests to Gemini's format,
 allowing you to use the same code structure across providers.
 
 ```javascript
-import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@1";
-import { gemini } from "https://cdn.jsdelivr.net/npm/asyncllm@1/dist/gemini.js";
+import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@2";
+import { gemini } from "https://cdn.jsdelivr.net/npm/asyncllm@2/dist/gemini.js";
 
 // You can use the gemini() adapter to convert OpenAI-style requests to Gemini's format.
 const body = gemini({
@@ -203,16 +242,6 @@ for await (const data of asyncLLM(
   console.log(data);
 }
 ```
-
-The Gemini adapter supports:
-
-- System messages
-- Multi-modal content (text, images, audio via URL or data URI)
-- Model parameters (temperature, max_tokens, top_p, stop, n, presence_penalty, frequency_penalty, logprobs, top_logprobs, but not metadata)
-- Function calling (no parallel execution support)
-- JSON mode and schema validation
-- Stop sequences
-- Multiple candidates
 
 ### Function Calling
 
@@ -263,7 +292,7 @@ for await (const { tools } of asyncLLM("https://api.openai.com/v1/chat/completio
 
 Use a library like [partial-json](https://www.npmjs.com/package/partial-json) to parse the `args` incrementally.
 
-### Config
+### Streaming Config
 
 asyncLLM accepts a `config` object with the following properties:
 
@@ -273,7 +302,7 @@ asyncLLM accepts a `config` object with the following properties:
 Here's how you can use a custom fetch implementation:
 
 ```javascript
-import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@1";
+import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@2";
 
 const body = {
   // Same as OpenAI example above
@@ -306,7 +335,7 @@ for await (const { content } of asyncLLM(
 You can parse streamed SSE events from a text string (e.g. from a cached response) using the provided `fetchText` helper:
 
 ```javascript
-import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@1";
+import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@2";
 import { fetchText } from "https://cdn.jsdelivr.net/npm/asyncsse@1/dist/fetchtext.js";
 
 const text = `
@@ -352,8 +381,31 @@ The `error` property is set if:
 - The fetch request fails (e.g. network error)
 - The response body cannot be parsed as JSON
 
+### `asyncLLM(request: string | Request, options?: RequestInit, config?: SSEConfig): AsyncGenerator<LLMEvent, void, unknown>`
+
+Fetches streaming responses from LLM providers and yields events.
+
+- `request`: The URL or Request object for the LLM API endpoint
+- `options`: Optional [fetch options](https://developer.mozilla.org/en-US/docs/Web/API/fetch#parameters)
+- `config`: Optional configuration object for SSE handling
+  - `fetch`: Custom fetch implementation (defaults to global fetch)
+  - `onResponse`: Async callback function that receives the Response object before streaming begins. If the callback returns a promise, it will be awaited before continuing the stream.
+
+Returns an async generator that yields [`LLMEvent` objects](#llmevent).
+
+#### LLMEvent
+
+- `content`: The text content of the response
+- `tools`: Array of tool call objects with:
+  - `name`: The name of the tool being called
+  - `args`: The arguments for the tool call as a JSON-encoded string, e.g. `{"order_id":"123456"}`
+  - `id`: Optional unique identifier for the tool call (e.g. OpenAI's `call_F8YHCjnzrrTjfE4YSSpVW2Bc` or Anthropic's `toolu_01T1x1fJ34qAmk2tNTrN7Up6`. Gemini does not return an id.)
+- `message`: The raw message object from the LLM provider (may include id, model, usage stats, etc.)
+- `error`: Error message if the request fails
+
 ## Changelog
 
+- 2.1.1: Document standalone adapter usage
 - 2.1.0: Added `id` to tools to support unique tool call identifiers from providers
 - 2.0.1: Multiple tools support.
   - Breaking change: `tool` and `args` are not part of the response. Instead, it has `tools`, an array of `{ name, args }`
