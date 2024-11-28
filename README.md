@@ -122,7 +122,7 @@ For example, to update the DOM with the LLM's response:
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini-mini",
+        model: "gpt-4o-mini",
         // You MUST enable streaming, else the API will return an {error}
         stream: true,
         messages: [{ role: "user", content: "Hello, world!" }],
