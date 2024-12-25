@@ -1,6 +1,6 @@
 {
   "name": "asyncllm",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Fetch streaming LLM responses as an async iterable",
   "main": "dist/asyncllm.js",
   "type": "module",
@@ -36,12 +36,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gramener/asyncllm.git"
+    "url": "https://github.com/sanand0/asyncllm.git"
   },
   "bugs": {
-    "url": "https://github.com/gramener/asyncllm/issues"
+    "url": "https://github.com/sanand0/asyncllm/issues"
   },
-  "homepage": "https://github.com/gramener/asyncllm#readme",
+  "homepage": "https://github.com/sanand0/asyncllm#readme",
   "engines": {
     "node": ">=14.0.0"
   },

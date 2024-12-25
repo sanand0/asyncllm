@@ -405,6 +405,7 @@ Returns an async generator that yields [`LLMEvent` objects](#llmevent).
 
 ## Changelog
 
+- 2.1.2: Update repo links
 - 2.1.1: Document standalone adapter usage
 - 2.1.0: Added `id` to tools to support unique tool call identifiers from providers
 - 2.0.1: Multiple tools support.
