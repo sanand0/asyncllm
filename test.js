@@ -24,7 +24,7 @@ curl -X POST https://llmfoundry.straive.com/openai/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{"model": "gpt-4o-mini", "stream": true, "messages": [{"role": "user", "content": "Hello world"}]}'
 */
-Deno.test("asyncLLM - OpenAI", async () => {
+Deno.test("asyncLLM - OpenAI basic", async () => {
   const results = await Array.fromAsync(asyncLLM(`${BASE_URL}/openai.txt`));
 
   assertEquals(results.length, 10);
@@ -130,6 +130,129 @@ Deno.test("asyncLLM - OpenAI with multiple tool calls", async () => {
   assertEquals(index, 9);
   assertEquals(data.tools[0], { name: "get_order", id: "call_wnH2cswb4JAnm69pUAP4MNEN", args: '{"id": "123456"}' });
   assertEquals(data.tools[1], { name: "get_customer", id: "call_f4GVABhbwSOLoaisOBOajnsm", args: '{"id": "7890"}' });
+});
+
+/*
+curl https://api.openai.com/v1/responses \
+  -H "Authorization: Bearer $OPENAI_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model": "gpt-4.1-nano", "stream": true, "input": "Hello world"}'
+*/
+Deno.test("asyncLLM - OpenAI Responses basic", async () => {
+  const results = await Array.fromAsync(asyncLLM(`${BASE_URL}/openai-responses.txt`));
+
+  assertEquals(results.length, 9);
+  assertEquals(results[0].content, "Hello");
+  assertEquals(results[1].content, "Hello!");
+  assertEquals(results[2].content, "Hello! How");
+  assertEquals(results[8].content, "Hello! How can I assist you today?");
+  assertEquals(results.at(-1).tools, undefined);
+});
+
+/*
+curl https://api.openai.com/v1/responses \
+  -H "Authorization: Bearer $OPENAI_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-4.1-nano",
+    "stream": true,
+    "input": [
+      { "role": "system", "content": "Call get_order({order_id}) AND get_customer({customer_id}) in parallel" },
+      { "role": "user", "content": "Order ID: 123456, Customer ID: 7890" }
+    ],
+    "tool_choice": "required",
+    "tools": [
+      {
+        "type": "function",
+        "name": "get_delivery_date",
+        "description": "Get the delivery date for a customer order.",
+        "parameters": {
+          "type": "object",
+          "properties": { "order_id": { "type": "string", "description": "The customer order ID." } },
+          "required": ["order_id"],
+          "additionalProperties": false
+        }
+      }
+    ]
+  }'
+*/
+Deno.test("asyncLLM - OpenAI Responses with tool calls", async () => {
+  let index = 0;
+  let data = {};
+  for await (data of asyncLLM(`${BASE_URL}/openai-responses-tools.txt`)) {
+    if (index == 0) {
+      assertEquals(data.tools[0].name, "get_delivery_date");
+      assertEquals(data.tools[0].id, "fc_6808d3a08e708192a65b2c19dbc8b9140a601c2646a05cfd");
+      assertEquals(data.tools[0].args, "");
+    }
+    if (index == 1) assertEquals(data.tools[0].args, '{"');
+    if (index == 7) assertEquals(data.tools[0].args, '{"order_id":"123456"}');
+    if (index == 7) assertEquals(data.content, undefined);
+    index++;
+  }
+  assertEquals(JSON.parse(data.tools[0].args), { order_id: "123456" });
+  assertEquals(index, 8);
+});
+
+/*
+curl https://api.openai.com/v1/responses \
+  -H "Authorization: Bearer $OPENAI_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-4.1-nano",
+    "stream": true,
+    "input": [
+      { "role": "system", "content": "Call get_order({order_id}) AND get_customer({customer_id}) in parallel" },
+      { "role": "user", "content": "Order ID: 123456, Customer ID: 7890" }
+    ],
+    "tool_choice": "required",
+    "tools": [
+      {
+        "type": "function",
+        "name": "get_order",
+        "parameters": { "type": "object", "properties": { "id": { "type": "string" } }, "required": ["id"] }
+      },
+      {
+        "type": "function",
+        "name": "get_customer",
+        "parameters": { "type": "object", "properties": { "id": { "type": "string" } }, "required": ["id"] }
+      }
+    ]
+  }'
+*/
+Deno.test("asyncLLM - OpenAI Responses with multiple tool calls", async () => {
+  let index = 0;
+  let data = {};
+  for await (data of asyncLLM(`${BASE_URL}/openai-responses-tools2.txt`)) {
+    if (index === 0) {
+      assertEquals(data.tools[0], {
+        name: "get_order",
+        id: "fc_6808d34ab2748192957f518947f0e14d01c57d45ab76fecc",
+        args: "",
+      });
+    }
+    if (index === 7) assertEquals(data.tools[0].args, '{"id":"123456"}');
+    if (index === 10) {
+      assertEquals(data.tools[1], {
+        name: "get_customer",
+        id: "fc_6808d34ac3548192916cd16fdad20dc101c57d45ab76fecc",
+        args: '{"id":',
+      });
+    }
+    if (index === 13) assertEquals(data.tools[1].args, '{"id":"7890"}');
+    index++;
+  }
+  assertEquals(index, 14);
+  assertEquals(data.tools[0], {
+    name: "get_order",
+    id: "fc_6808d34ab2748192957f518947f0e14d01c57d45ab76fecc",
+    args: '{"id":"123456"}',
+  });
+  assertEquals(data.tools[1], {
+    name: "get_customer",
+    id: "fc_6808d34ac3548192916cd16fdad20dc101c57d45ab76fecc",
+    args: '{"id":"7890"}',
+  });
 });
 
 /*

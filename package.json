@@ -1,6 +1,6 @@
 {
   "name": "asyncllm",
-  "version": "2.1.2",
+  "version": "2.2.0",
   "description": "Fetch streaming LLM responses as an async iterable",
   "main": "dist/asyncllm.js",
   "type": "module",
@@ -16,7 +16,7 @@
     "build-gemini": "npx -y esbuild gemini.js --bundle --minify --format=esm --outfile=dist/gemini.js",
     "build-anthropic": "npx -y esbuild anthropic.js --bundle --minify --format=esm --outfile=dist/anthropic.js",
     "build": "npm run build-asyncllm && npm run build-gemini && npm run build-anthropic",
-    "lint": "npx prettier@3.3 --write *.js *.md",
+    "lint": "npx prettier@3.5 --write *.js *.md",
     "prepublishOnly": "npm run lint && npm run build"
   },
   "keywords": [

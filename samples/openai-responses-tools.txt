@@ -1,0 +1,39 @@
+event: response.created
+data: {"type":"response.created","response":{"id":"resp_6808d3a020488192b2a013332cb5f5e70a601c2646a05cfd","object":"response","created_at":1745408928,"status":"in_progress","error":null,"incomplete_details":null,"instructions":null,"max_output_tokens":null,"model":"gpt-4.1-nano-2025-04-14","output":[],"parallel_tool_calls":true,"previous_response_id":null,"reasoning":{"effort":null,"summary":null},"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"}},"tool_choice":"required","tools":[{"type":"function","description":"Get the delivery date for a customer order.","name":"get_delivery_date","parameters":{"type":"object","properties":{"order_id":{"type":"string","description":"The customer order ID."}},"required":["order_id"],"additionalProperties":false},"strict":true}],"top_p":1.0,"truncation":"disabled","usage":null,"user":null,"metadata":{}}}
+
+event: response.in_progress
+data: {"type":"response.in_progress","response":{"id":"resp_6808d3a020488192b2a013332cb5f5e70a601c2646a05cfd","object":"response","created_at":1745408928,"status":"in_progress","error":null,"incomplete_details":null,"instructions":null,"max_output_tokens":null,"model":"gpt-4.1-nano-2025-04-14","output":[],"parallel_tool_calls":true,"previous_response_id":null,"reasoning":{"effort":null,"summary":null},"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"}},"tool_choice":"required","tools":[{"type":"function","description":"Get the delivery date for a customer order.","name":"get_delivery_date","parameters":{"type":"object","properties":{"order_id":{"type":"string","description":"The customer order ID."}},"required":["order_id"],"additionalProperties":false},"strict":true}],"top_p":1.0,"truncation":"disabled","usage":null,"user":null,"metadata":{}}}
+
+event: response.output_item.added
+data: {"type":"response.output_item.added","output_index":0,"item":{"id":"fc_6808d3a08e708192a65b2c19dbc8b9140a601c2646a05cfd","type":"function_call","status":"in_progress","arguments":"","call_id":"call_IEmWx3mU3gTg0kVsMN5tOHbq","name":"get_delivery_date"}}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","item_id":"fc_6808d3a08e708192a65b2c19dbc8b9140a601c2646a05cfd","output_index":0,"delta":"{\""}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","item_id":"fc_6808d3a08e708192a65b2c19dbc8b9140a601c2646a05cfd","output_index":0,"delta":"order"}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","item_id":"fc_6808d3a08e708192a65b2c19dbc8b9140a601c2646a05cfd","output_index":0,"delta":"_id"}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","item_id":"fc_6808d3a08e708192a65b2c19dbc8b9140a601c2646a05cfd","output_index":0,"delta":"\":\""}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","item_id":"fc_6808d3a08e708192a65b2c19dbc8b9140a601c2646a05cfd","output_index":0,"delta":"123"}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","item_id":"fc_6808d3a08e708192a65b2c19dbc8b9140a601c2646a05cfd","output_index":0,"delta":"456"}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","item_id":"fc_6808d3a08e708192a65b2c19dbc8b9140a601c2646a05cfd","output_index":0,"delta":"\"}"}
+
+event: response.function_call_arguments.done
+data: {"type":"response.function_call_arguments.done","item_id":"fc_6808d3a08e708192a65b2c19dbc8b9140a601c2646a05cfd","output_index":0,"arguments":"{\"order_id\":\"123456\"}"}
+
+event: response.output_item.done
+data: {"type":"response.output_item.done","output_index":0,"item":{"id":"fc_6808d3a08e708192a65b2c19dbc8b9140a601c2646a05cfd","type":"function_call","status":"completed","arguments":"{\"order_id\":\"123456\"}","call_id":"call_IEmWx3mU3gTg0kVsMN5tOHbq","name":"get_delivery_date"}}
+
+event: response.completed
+data: {"type":"response.completed","response":{"id":"resp_6808d3a020488192b2a013332cb5f5e70a601c2646a05cfd","object":"response","created_at":1745408928,"status":"completed","error":null,"incomplete_details":null,"instructions":null,"max_output_tokens":null,"model":"gpt-4.1-nano-2025-04-14","output":[{"id":"fc_6808d3a08e708192a65b2c19dbc8b9140a601c2646a05cfd","type":"function_call","status":"completed","arguments":"{\"order_id\":\"123456\"}","call_id":"call_IEmWx3mU3gTg0kVsMN5tOHbq","name":"get_delivery_date"}],"parallel_tool_calls":true,"previous_response_id":null,"reasoning":{"effort":null,"summary":null},"service_tier":"default","store":true,"temperature":1.0,"text":{"format":{"type":"text"}},"tool_choice":"required","tools":[{"type":"function","description":"Get the delivery date for a customer order.","name":"get_delivery_date","parameters":{"type":"object","properties":{"order_id":{"type":"string","description":"The customer order ID."}},"required":["order_id"],"additionalProperties":false},"strict":true}],"top_p":1.0,"truncation":"disabled","usage":{"input_tokens":91,"input_tokens_details":{"cached_tokens":0},"output_tokens":8,"output_tokens_details":{"reasoning_tokens":0},"total_tokens":99},"user":null,"metadata":{}}}
+

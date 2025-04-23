@@ -1,0 +1,63 @@
+event: response.created
+data: {"type":"response.created","response":{"id":"resp_6808d34264cc8192a90be606a7cc50bc01c57d45ab76fecc","object":"response","created_at":1745408834,"status":"in_progress","error":null,"incomplete_details":null,"instructions":null,"max_output_tokens":null,"model":"gpt-4.1-nano-2025-04-14","output":[],"parallel_tool_calls":true,"previous_response_id":null,"reasoning":{"effort":null,"summary":null},"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"}},"tool_choice":"required","tools":[{"type":"function","description":null,"name":"get_order","parameters":{"type":"object","properties":{"id":{"type":"string"}},"required":["id"]},"strict":true},{"type":"function","description":null,"name":"get_customer","parameters":{"type":"object","properties":{"id":{"type":"string"}},"required":["id"]},"strict":true}],"top_p":1.0,"truncation":"disabled","usage":null,"user":null,"metadata":{}}}
+
+event: response.in_progress
+data: {"type":"response.in_progress","response":{"id":"resp_6808d34264cc8192a90be606a7cc50bc01c57d45ab76fecc","object":"response","created_at":1745408834,"status":"in_progress","error":null,"incomplete_details":null,"instructions":null,"max_output_tokens":null,"model":"gpt-4.1-nano-2025-04-14","output":[],"parallel_tool_calls":true,"previous_response_id":null,"reasoning":{"effort":null,"summary":null},"service_tier":"auto","store":true,"temperature":1.0,"text":{"format":{"type":"text"}},"tool_choice":"required","tools":[{"type":"function","description":null,"name":"get_order","parameters":{"type":"object","properties":{"id":{"type":"string"}},"required":["id"]},"strict":true},{"type":"function","description":null,"name":"get_customer","parameters":{"type":"object","properties":{"id":{"type":"string"}},"required":["id"]},"strict":true}],"top_p":1.0,"truncation":"disabled","usage":null,"user":null,"metadata":{}}}
+
+event: response.output_item.added
+data: {"type":"response.output_item.added","output_index":0,"item":{"id":"fc_6808d34ab2748192957f518947f0e14d01c57d45ab76fecc","type":"function_call","status":"in_progress","arguments":"","call_id":"call_khElVS1NoyNcckH2EuTtpSDR","name":"get_order"}}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","item_id":"fc_6808d34ab2748192957f518947f0e14d01c57d45ab76fecc","output_index":0,"delta":"{"}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","item_id":"fc_6808d34ab2748192957f518947f0e14d01c57d45ab76fecc","output_index":0,"delta":"\"id"}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","item_id":"fc_6808d34ab2748192957f518947f0e14d01c57d45ab76fecc","output_index":0,"delta":"\":"}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","item_id":"fc_6808d34ab2748192957f518947f0e14d01c57d45ab76fecc","output_index":0,"delta":"\"123"}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","item_id":"fc_6808d34ab2748192957f518947f0e14d01c57d45ab76fecc","output_index":0,"delta":"456"}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","item_id":"fc_6808d34ab2748192957f518947f0e14d01c57d45ab76fecc","output_index":0,"delta":"\"}"}
+
+event: response.function_call_arguments.done
+data: {"type":"response.function_call_arguments.done","item_id":"fc_6808d34ab2748192957f518947f0e14d01c57d45ab76fecc","output_index":0,"arguments":"{\"id\":\"123456\"}"}
+
+event: response.output_item.done
+data: {"type":"response.output_item.done","output_index":0,"item":{"id":"fc_6808d34ab2748192957f518947f0e14d01c57d45ab76fecc","type":"function_call","status":"completed","arguments":"{\"id\":\"123456\"}","call_id":"call_khElVS1NoyNcckH2EuTtpSDR","name":"get_order"}}
+
+event: response.output_item.added
+data: {"type":"response.output_item.added","output_index":1,"item":{"id":"fc_6808d34ac3548192916cd16fdad20dc101c57d45ab76fecc","type":"function_call","status":"in_progress","arguments":"","call_id":"call_562xX7CoxXqdLoTJBCK8VbZq","name":"get_customer"}}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","item_id":"fc_6808d34ac3548192916cd16fdad20dc101c57d45ab76fecc","output_index":1,"delta":"{"}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","item_id":"fc_6808d34ac3548192916cd16fdad20dc101c57d45ab76fecc","output_index":1,"delta":"\"id"}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","item_id":"fc_6808d34ac3548192916cd16fdad20dc101c57d45ab76fecc","output_index":1,"delta":"\":"}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","item_id":"fc_6808d34ac3548192916cd16fdad20dc101c57d45ab76fecc","output_index":1,"delta":"\"789"}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","item_id":"fc_6808d34ac3548192916cd16fdad20dc101c57d45ab76fecc","output_index":1,"delta":"0"}
+
+event: response.function_call_arguments.delta
+data: {"type":"response.function_call_arguments.delta","item_id":"fc_6808d34ac3548192916cd16fdad20dc101c57d45ab76fecc","output_index":1,"delta":"\"}"}
+
+event: response.function_call_arguments.done
+data: {"type":"response.function_call_arguments.done","item_id":"fc_6808d34ac3548192916cd16fdad20dc101c57d45ab76fecc","output_index":1,"arguments":"{\"id\":\"7890\"}"}
+
+event: response.output_item.done
+data: {"type":"response.output_item.done","output_index":1,"item":{"id":"fc_6808d34ac3548192916cd16fdad20dc101c57d45ab76fecc","type":"function_call","status":"completed","arguments":"{\"id\":\"7890\"}","call_id":"call_562xX7CoxXqdLoTJBCK8VbZq","name":"get_customer"}}
+
+event: response.completed
+data: {"type":"response.completed","response":{"id":"resp_6808d34264cc8192a90be606a7cc50bc01c57d45ab76fecc","object":"response","created_at":1745408834,"status":"completed","error":null,"incomplete_details":null,"instructions":null,"max_output_tokens":null,"model":"gpt-4.1-nano-2025-04-14","output":[{"id":"fc_6808d34ab2748192957f518947f0e14d01c57d45ab76fecc","type":"function_call","status":"completed","arguments":"{\"id\":\"123456\"}","call_id":"call_khElVS1NoyNcckH2EuTtpSDR","name":"get_order"},{"id":"fc_6808d34ac3548192916cd16fdad20dc101c57d45ab76fecc","type":"function_call","status":"completed","arguments":"{\"id\":\"7890\"}","call_id":"call_562xX7CoxXqdLoTJBCK8VbZq","name":"get_customer"}],"parallel_tool_calls":true,"previous_response_id":null,"reasoning":{"effort":null,"summary":null},"service_tier":"default","store":true,"temperature":1.0,"text":{"format":{"type":"text"}},"tool_choice":"required","tools":[{"type":"function","description":null,"name":"get_order","parameters":{"type":"object","properties":{"id":{"type":"string"}},"required":["id"]},"strict":true},{"type":"function","description":null,"name":"get_customer","parameters":{"type":"object","properties":{"id":{"type":"string"}},"required":["id"]},"strict":true}],"top_p":1.0,"truncation":"disabled","usage":{"input_tokens":0,"input_tokens_details":{"cached_tokens":0},"output_tokens":0,"output_tokens_details":{"reasoning_tokens":0},"total_tokens":0},"user":null,"metadata":{}}}
+

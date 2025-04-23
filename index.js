@@ -67,6 +67,7 @@ export async function* asyncLLM(request, options = {}, config = {}) {
     for (const parser of Object.values(providers)) {
       const extract = parser(message);
       hasNewData = !isEmpty(extract.content) || extract.tools.length > 0;
+      // console.log(hasNewData, parser, extract, message);
       if (!isEmpty(extract.content)) content = (content ?? "") + extract.content;
       for (const { name, args, id } of extract.tools) {
         if (!isEmpty(name)) {
@@ -104,6 +105,16 @@ const providers = {
       args: tool.function.arguments,
     })),
   }),
+  // OpenAI Responses API (streaming w/ tool support)
+  openaiResponses: (m) => ({
+    content: m.type == "response.output_text.delta" ? m.delta : undefined,
+    tools:
+      m.type == "response.output_item.added" && m.item?.type == "function_call"
+        ? [{ id: m.item.id, name: m.item.name, args: m.item.arguments }]
+        : m.type == "response.function_call_arguments.delta"
+          ? [{ args: m.delta }]
+          : [],
+  }),
   anthropic: (m) => ({
     content: m.delta?.text,
     tools: !isEmpty(m.content_block?.name)
@@ -119,10 +130,13 @@ const providers = {
       .filter((d) => d)
       .map((d) => ({ name: d.name, args: JSON.stringify(d.args) })),
   }),
+  // OpenAI's Responses API also has a .response, so we need to disambiguate.
+  /*
   cloudflare: (m) => ({
     content: m.response,
     tools: [],
   }),
+  */
 };
 
 const isEmpty = (value) => value === undefined || value === null;

@@ -20,13 +20,13 @@ npm install asyncllm
 
 ## Anthropic and Gemini Adapters
 
-Adapters convert OpenAI-style request bodies to the [Anthropic](https://docs.anthropic.com/en/api/messages) or [Gemini](https://ai.google.dev/gemini-api/docs/text-generation?lang=rest) formats. For example:
+Adapters convert OpenAI chat completions request bodies to the [Anthropic](https://docs.anthropic.com/en/api/messages) or [Gemini](https://ai.google.dev/gemini-api/docs/text-generation?lang=rest) formats. For example:
 
 ```javascript
 import { anthropic } from "https://cdn.jsdelivr.net/npm/asyncllm@2/dist/anthropic.js";
 import { gemini } from "https://cdn.jsdelivr.net/npm/asyncllm@2/dist/gemini.js";
 
-// Create an OpenAI-style request
+// Create an OpenAI chat completions request
 const body = {
   messages: [{ role: "user", content: "Hello, world!" }],
   temperature: 0.5,
@@ -36,7 +36,7 @@ const body = {
 const anthropicResponse = await fetch("https://api.anthropic.com/v1/messages", {
   method: "POST",
   headers: { "Content-Type": "application/json", "x-api-key": "YOUR_API_KEY" },
-  // anthropic() converts the OpenAI-style request to Anthropic's format
+  // anthropic() converts the OpenAI chat completions request to Anthropic's format
   body: JSON.stringify(anthropic({ ...body, model: "claude-3-haiku-20240307" })),
 }).then((r) => r.json());
 
@@ -46,7 +46,7 @@ const geminiResponse = await fetch(
   {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer YOUR_API_KEY` },
-    // gemini() converts the OpenAI-style request to Gemini's format
+    // gemini() converts the OpenAI chat completions request to Gemini's format
     body: JSON.stringify(gemini(body)),
   },
 ).then((r) => r.json());
@@ -94,7 +94,8 @@ Image Sources
 
 Call `asyncLLM()` just like you would use `fetch` with any LLM provider with streaming responses.
 
-- [OpenAI Streaming](https://platform.openai.com/docs/api-reference/chat/streaming). Many providers like Azure, Groq, OpenRouter, etc. follow the OpenAI API.
+- [OpenAI Chat Completion Streaming](https://platform.openai.com/docs/api-reference/chat-streaming). Many providers like Azure, Groq, OpenRouter, etc. follow the OpenAI Chat Completion API.
+- [OpenAI Responses API Streaming](https://platform.openai.com/docs/api-reference/responses-streaming).
 - [Anthropic Streaming](https://docs.anthropic.com/en/api/messages-streaming)
 - [Gemini Streaming](https://ai.google.dev/gemini-api/docs/text-generation?lang=rest#generate-a-text-stream)
 
@@ -122,7 +123,7 @@ For example, to update the DOM with the LLM's response:
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "gpt-4.1-nano",
         // You MUST enable streaming, else the API will return an {error}
         stream: true,
         messages: [{ role: "user", content: "Hello, world!" }],
@@ -151,7 +152,7 @@ import { asyncLLM } from "asyncllm";
 import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@2";
 
 const body = {
-  model: "gpt-4o-mini",
+  model: "gpt-4.1-nano",
   // You MUST enable streaming, else the API will return an {error}
   stream: true,
   messages: [{ role: "user", content: "Hello, world!" }],
@@ -169,24 +170,55 @@ for await (const data of asyncLLM("https://api.openai.com/v1/chat/completions", 
 This will log something like this on the console:
 
 ```js
-{ content: "", tool: undefined, args: undefined, message: { "id": "chatcmpl-...", ...} }
-{ content: "Hello", tool: undefined, args: undefined, message: { "id": "chatcmpl-...", ...} }
-{ content: "Hello!", tool: undefined, args: undefined, message: { "id": "chatcmpl-...", ...} }
-{ content: "Hello! How", tool: undefined, args: undefined, message: { "id": "chatcmpl-...", ...} }
+{ content: "", message: { "id": "chatcmpl-...", ...} }
+{ content: "Hello", message: { "id": "chatcmpl-...", ...} }
+{ content: "Hello!", message: { "id": "chatcmpl-...", ...} }
+{ content: "Hello! How", message: { "id": "chatcmpl-...", ...} }
 ...
-{ content: "Hello! How can I assist you today?", tool: undefined, args: undefined, message: { "id": "chatcmpl-...", ...} }
+{ content: "Hello! How can I assist you today?", message: { "id": "chatcmpl-...", ...} }
+```
+
+## OpenAI Responses API streaming
+
+```javascript
+import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@2";
+
+const body = {
+  model: "gpt-4.1-mini",
+  // You MUST enable streaming, else the API will return an {error}
+  stream: true,
+  input: "Hello, world!",
+};
+
+for await (const data of asyncLLM("https://api.openai.com/v1/responses", {
+  method: "POST",
+  headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+  body: JSON.stringify(body),
+})) {
+  console.log(data);
+}
+```
+
+This will log something like this on the console:
+
+```js
+{ content: "Hello", message: { "item_id": "msg_...", ...} }
+{ content: "Hello!", message: { "item_id": "msg_...", ...} }
+{ content: "Hello! How", message: { "item_id": "msg_...", ...} }
+...
+{ content: "Hello! How can I assist you today?", message: { "item_id": "msg_...", ...} }
 ```
 
 ### Anthropic streaming
 
-The package includes an Anthropic adapter that converts OpenAI-style requests to Anthropic's format,
+The package includes an Anthropic adapter that converts OpenAI chat completions requests to Anthropic's format,
 allowing you to use the same code structure across providers.
 
 ```javascript
 import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@2";
 import { anthropic } from "https://cdn.jsdelivr.net/npm/asyncllm@2/dist/anthropic.js";
 
-// You can use the anthropic() adapter to convert OpenAI-style requests to Anthropic's format.
+// You can use the anthropic() adapter to convert OpenAI chat completions requests to Anthropic's format.
 const body = anthropic({
   // Same as OpenAI example above
 });
@@ -210,14 +242,14 @@ for await (const data of asyncLLM("https://api.anthropic.com/v1/messages", {
 
 ### Gemini streaming
 
-The package includes a Gemini adapter that converts OpenAI-style requests to Gemini's format,
+The package includes a Gemini adapter that converts OpenAI chat completions requests to Gemini's format,
 allowing you to use the same code structure across providers.
 
 ```javascript
 import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@2";
 import { gemini } from "https://cdn.jsdelivr.net/npm/asyncllm@2/dist/gemini.js";
 
-// You can use the gemini() adapter to convert OpenAI-style requests to Gemini's format.
+// You can use the gemini() adapter to convert OpenAI chat completions requests to Gemini's format.
 const body = gemini({
   // Same as OpenAI example above
 });
@@ -245,7 +277,7 @@ for await (const data of asyncLLM(
 
 ### Function Calling
 
-asyncLLM supports function calling (aka tools). Here's an example with OpenAI:
+asyncLLM supports function calling (aka tools). Here's an example with OpenAI chat completions:
 
 ```javascript
 for await (const { tools } of asyncLLM("https://api.openai.com/v1/chat/completions", {
@@ -255,7 +287,7 @@ for await (const { tools } of asyncLLM("https://api.openai.com/v1/chat/completio
     Authorization: `Bearer ${apiKey}`,
   },
   body: JSON.stringify({
-    model: "gpt-4o-mini",
+    model: "gpt-4.1-nano",
     stream: true,
     messages: [
       { role: "system", content: "Get delivery date for order" },
@@ -403,8 +435,25 @@ Returns an async generator that yields [`LLMEvent` objects](#llmevent).
 - `message`: The raw message object from the LLM provider (may include id, model, usage stats, etc.)
 - `error`: Error message if the request fails
 
+## Setup
+
+```bash
+git clone https://github.com/sanand0/asyncllm
+cd asyncllm
+npm install
+
+# Run all tests
+npm test
+# ... or specific tests
+npm test -- --filter 'OpenAI'
+
+# Deploy: update package.json version, then:
+npm publish
+```
+
 ## Changelog
 
+- 2.2.0: Added [OpenAI Responses API](https://platform.openai.com/docs/api-reference/responses-streaming)
 - 2.1.2: Update repo links
 - 2.1.1: Document standalone adapter usage
 - 2.1.0: Added `id` to tools to support unique tool call identifiers from providers
