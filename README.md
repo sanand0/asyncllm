@@ -2,6 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/asyncllm.svg)](https://www.npmjs.com/package/asyncllm)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/asyncllm)](https://bundlephobia.com/package/asyncllm)
 
 Fetch LLM responses across multiple providers as an async iterable.
 
