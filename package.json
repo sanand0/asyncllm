@@ -33,7 +33,7 @@
     "lint:js-md": "npx -y prettier@3.5 --print-width 120 --write '**/*.js' '!**/*.min.js' '!dist/**' '**/*.md'",
     "lint:html": "npx -y js-beautify@1 '**/*.html' --type html --replace --indent-size 2 --max-preserve-newlines 1 --end-with-newline",
     "lint": "npm run lint:oxlint && npm run lint:js-md && npm run lint:html",
-    "test": "deno test --allow-net --allow-read",
+    "test": "npx -y vitest run",
     "prepublishOnly": "npm run lint && npm run build && npm test"
   },
   "dependencies": {
@@ -51,5 +51,9 @@
     "anthropic",
     "gemini",
     "cloudflare"
-  ]
+  ],
+  "devDependencies": {
+    "happy-dom": "^18.0.1",
+    "vitest": "^3.2.4"
+  }
 }
