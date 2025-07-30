@@ -1,4 +1,4 @@
-import { asyncLLM } from "./index.js";
+import { asyncLLM } from "./asyncllm.js";
 
 const PORT = 8080;
 const BASE_URL = `http://localhost:${PORT}`;

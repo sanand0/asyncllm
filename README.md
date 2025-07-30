@@ -6,8 +6,6 @@
 
 Fetch LLM responses across multiple providers as an async iterable.
 
-## Features
-
 - 🚀 Lightweight (~2KB) and dependency-free
 - 🔄 Works with multiple LLM providers (OpenAI, Anthropic, Gemini, and more)
 - 🌐 Browser and Node.js compatible
@@ -15,11 +13,70 @@ Fetch LLM responses across multiple providers as an async iterable.
 
 ## Installation
 
+To use locally, install via `npm`:
+
 ```bash
 npm install asyncllm
 ```
 
-## Anthropic and Gemini Adapters
+... and add this to your script:
+
+```js
+import { asyncLLM } from "./node_modules/asyncllm/dist/asyncllm.js";
+```
+
+To use via CDN, add this to your script:
+
+```js
+import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@1";
+```
+
+## Usage
+
+### Streaming
+
+Call `asyncLLM()` just like you would use `fetch` with any LLM provider with streaming responses.
+
+- [OpenAI Chat Completion Streaming](https://platform.openai.com/docs/api-reference/chat-streaming). Many providers like Azure, Groq, OpenRouter, etc. follow the OpenAI Chat Completion API.
+- [OpenAI Responses API Streaming](https://platform.openai.com/docs/api-reference/responses-streaming).
+- [Anthropic Streaming](https://docs.anthropic.com/en/api/messages-streaming)
+- [Gemini Streaming](https://ai.google.dev/gemini-api/docs/text-generation?lang=rest#generate-a-text-stream)
+
+The result is an async generator that yields objects with `content`, `error`, `tools`, and `message` properties.
+
+For example, to update the DOM with the LLM's response:
+
+```javascript
+import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@2";
+
+const body = {
+  model: "gpt-4.1-nano",
+  // You MUST enable streaming, else the API will return an {error}
+  stream: true,
+  messages: [{ role: "user", content: "Hello, world!" }],
+};
+
+for await (const { content, error } of asyncLLM("https://api.openai.com/v1/chat/completions", {
+  method: "POST",
+  headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+  body: JSON.stringify(body),
+})) {
+  if (content) document.getElementById("output").textContent = content;
+}
+```
+
+This will log something like this on the console:
+
+```js
+{ content: "", message: { "id": "chatcmpl-...", ...} }
+{ content: "Hello", message: { "id": "chatcmpl-...", ...} }
+{ content: "Hello!", message: { "id": "chatcmpl-...", ...} }
+{ content: "Hello! How", message: { "id": "chatcmpl-...", ...} }
+...
+{ content: "Hello! How can I assist you today?", message: { "id": "chatcmpl-...", ...} }
+```
+
+### Anthropic and Gemini Adapters
 
 Adapters convert OpenAI chat completions request bodies to the [Anthropic](https://docs.anthropic.com/en/api/messages) or [Gemini](https://ai.google.dev/gemini-api/docs/text-generation?lang=rest) formats. For example:
 
@@ -91,95 +148,7 @@ Image Sources
 | Data URI         | Y         | Y      |
 | External URLs    |           | Y      |
 
-## Streaming
-
-Call `asyncLLM()` just like you would use `fetch` with any LLM provider with streaming responses.
-
-- [OpenAI Chat Completion Streaming](https://platform.openai.com/docs/api-reference/chat-streaming). Many providers like Azure, Groq, OpenRouter, etc. follow the OpenAI Chat Completion API.
-- [OpenAI Responses API Streaming](https://platform.openai.com/docs/api-reference/responses-streaming).
-- [Anthropic Streaming](https://docs.anthropic.com/en/api/messages-streaming)
-- [Gemini Streaming](https://ai.google.dev/gemini-api/docs/text-generation?lang=rest#generate-a-text-stream)
-
-The result is an async generator that yields objects with `content`, `tool`, and `args` properties.
-
-For example, to update the DOM with the LLM's response:
-
-```html
-<!doctype html>
-<html lang="en">
-  <body>
-    <div id="output"></div>
-  </body>
-
-  <script type="module">
-    import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@2";
-
-    const apiKey = "YOUR_API_KEY";
-
-    // Example usage with OpenAI
-    for await (const { content } of asyncLLM("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: "gpt-4.1-nano",
-        // You MUST enable streaming, else the API will return an {error}
-        stream: true,
-        messages: [{ role: "user", content: "Hello, world!" }],
-      }),
-    })) {
-      // Update the output in real time.
-      document.getElementById("output").textContent = content;
-    }
-  </script>
-</html>
-```
-
-### Node.js or bundled projects
-
-```javascript
-import { asyncLLM } from "asyncllm";
-
-// Usage is the same as in the browser example
-```
-
-## Examples
-
-### OpenAI streaming
-
-```javascript
-import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@2";
-
-const body = {
-  model: "gpt-4.1-nano",
-  // You MUST enable streaming, else the API will return an {error}
-  stream: true,
-  messages: [{ role: "user", content: "Hello, world!" }],
-};
-
-for await (const data of asyncLLM("https://api.openai.com/v1/chat/completions", {
-  method: "POST",
-  headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
-  body: JSON.stringify(body),
-})) {
-  console.log(data);
-}
-```
-
-This will log something like this on the console:
-
-```js
-{ content: "", message: { "id": "chatcmpl-...", ...} }
-{ content: "Hello", message: { "id": "chatcmpl-...", ...} }
-{ content: "Hello!", message: { "id": "chatcmpl-...", ...} }
-{ content: "Hello! How", message: { "id": "chatcmpl-...", ...} }
-...
-{ content: "Hello! How can I assist you today?", message: { "id": "chatcmpl-...", ...} }
-```
-
-## OpenAI Responses API streaming
+### OpenAI Responses API streaming
 
 ```javascript
 import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@2";
@@ -363,7 +332,7 @@ for await (const { content } of asyncLLM(
 }
 ```
 
-## Streaming from text
+### Streaming from text
 
 You can parse streamed SSE events from a text string (e.g. from a cached response) using the provided `fetchText` helper:
 
@@ -414,6 +383,8 @@ The `error` property is set if:
 - The fetch request fails (e.g. network error)
 - The response body cannot be parsed as JSON
 
+## API
+
 ### `asyncLLM(request: string | Request, options?: RequestInit, config?: SSEConfig): AsyncGenerator<LLMEvent, void, unknown>`
 
 Fetches streaming responses from LLM providers and yields events.
@@ -436,42 +407,42 @@ Returns an async generator that yields [`LLMEvent` objects](#llmevent).
 - `message`: The raw message object from the LLM provider (may include id, model, usage stats, etc.)
 - `error`: Error message if the request fails
 
-## Setup
+### Node.js usage
 
-```bash
-git clone https://github.com/sanand0/asyncllm
-cd asyncllm
-npm install
+```javascript
+import { asyncLLM } from "asyncllm";
 
-# Run all tests
-npm test
-# ... or specific tests
-npm test -- --filter 'OpenAI'
-
-# Deploy: update package.json version, then:
-npm publish
+// Rest of the usage is the same as in the browser examples
 ```
 
-## Changelog
+## Development
 
-- 2.2.0: Added [OpenAI Responses API](https://platform.openai.com/docs/api-reference/responses-streaming)
-- 2.1.2: Update repo links
-- 2.1.1: Document standalone adapter usage
-- 2.1.0: Added `id` to tools to support unique tool call identifiers from providers
-- 2.0.1: Multiple tools support.
-  - Breaking change: `tool` and `args` are not part of the response. Instead, it has `tools`, an array of `{ name, args }`
-  - Fixed Gemini adapter to return `toolConfig` instead of `toolsConfig`
-- 1.2.2: Added streaming from text documentation via `config.fetch`. Upgrade to asyncSSE 1.3.1 (bug fix).
-- 1.2.1: Added `config.fetch` for custom fetch implementation
-- 1.2.0: Added `config.onResponse(response)` that receives the Response object before streaming begins
-- 1.1.3: Ensure `max_tokens` for Anthropic. Improve error handling
-- 1.1.1: Added [Anthropic adapter](#anthropic)
-- 1.1.0: Added [Gemini adapter](#gemini)
-- 1.0.0: Initial release with [asyncLLM](#asyncllm) and [LLMEvent](#llmevent)
+```bash
+git clone https://github.com/sanand0/asyncllm.git
+cd asyncllm
 
-## Contributing
+npm install
+npm run lint && npm run build && npm test
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+npm publish
+git commit . -m"$COMMIT_MSG"; git tag $VERSION; git push --follow-tags
+```
+
+## Release notes
+
+- [2.3.0](https://npmjs.com/package/asyncllm/v/2.2.0): 30 Jul 2025: Standardized package.json & README.md, renamed index.js to asyncllm.js
+- [2.2.0](https://npmjs.com/package/asyncllm/v/2.2.0): 23 Apr 2025. Added [OpenAI Responses API](https://platform.openai.com/docs/api-reference/responses-streaming)
+- [2.1.2](https://npmjs.com/package/asyncllm/v/2.1.2): 25 Dec 2024. Update repo links
+- [2.1.1](https://npmjs.com/package/asyncllm/v/2.1.1): 9 Nov 2024. Document standalone adapter usage
+- [2.1.0](https://npmjs.com/package/asyncllm/v/2.1.0): 7 Nov 2024. Added `id` to tools to support unique tool call identifiers from providers
+- [2.0.1](https://npmjs.com/package/asyncllm/v/2.0.1): 5 Nov 2024. Multiple tools support. **Breaking change**: `tool` and `args` are not part of the response. Instead, it has `tools`, an array of `{ name, args }`. Gemini adapter returns `toolConfig` instead of `toolsConfig`
+- [1.2.2](https://npmjs.com/package/asyncllm/v/1.2.2): 3 Nov 2024. Added streaming from text documentation via `config.fetch`. Upgrade to asyncSSE 1.3.1 (bug fix).
+- [1.2.1](https://npmjs.com/package/asyncllm/v/1.2.1): 3 Nov 2024. Added `config.fetch` for custom fetch implementation
+- [1.2.0](https://npmjs.com/package/asyncllm/v/1.2.0): 2 Nov 2024. Added `config.onResponse(response)` that receives the Response object before streaming begins
+- [1.1.3](https://npmjs.com/package/asyncllm/v/1.1.3): 2 Nov 2024. Ensure `max_tokens` for Anthropic. Improve error handling
+- [1.1.1](https://npmjs.com/package/asyncllm/v/1.1.1): 30 Oct 2024. Added [Anthropic adapter](#anthropic)
+- [1.1.0](https://npmjs.com/package/asyncllm/v/1.1.0): 30 Oct 2024. Added [Gemini adapter](#gemini)
+- [1.0.0](https://npmjs.com/package/asyncllm/v/1.0.0): 15 Oct 2024. Initial release with [asyncLLM](#asyncllm) and [LLMEvent](#llmevent)
 
 ## License
 
