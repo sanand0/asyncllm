@@ -1,6 +1,6 @@
 {
   "name": "asyncllm",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "Fetch streaming LLM responses as an async iterable",
   "homepage": "https://github.com/sanand0/asyncllm#readme",
   "repository": {
@@ -19,6 +19,7 @@
     "README.md",
     "dist/"
   ],
+  "browser": "dist/asyncllm.js",
   "exports": {
     ".": "./dist/asyncllm.js",
     "./anthropic": "./dist/anthropic.js",

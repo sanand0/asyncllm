@@ -80,7 +80,11 @@ const cases = [
   {
     name: "specific tool choice",
     input: { messages: [{ role: "user", content: "Hi" }], tool_choice: { function: { name: "get_weather" } } },
-    expected: { messages: [{ role: "user", content: "Hi" }], max_tokens: 4096, tool_choice: { type: "tool", name: "get_weather" } },
+    expected: {
+      messages: [{ role: "user", content: "Hi" }],
+      max_tokens: 4096,
+      tool_choice: { type: "tool", name: "get_weather" },
+    },
   },
 ];
 

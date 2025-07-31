@@ -9,13 +9,31 @@ const cases = [
   },
   {
     name: "system message handling",
-    input: { messages: [{ role: "system", content: "You are helpful" }, { role: "user", content: "Hi" }] },
-    expected: { systemInstruction: { parts: [{ text: "You are helpful" }] }, contents: [{ role: "user", parts: [{ text: "Hi" }] }] },
+    input: {
+      messages: [
+        { role: "system", content: "You are helpful" },
+        { role: "user", content: "Hi" },
+      ],
+    },
+    expected: {
+      systemInstruction: { parts: [{ text: "You are helpful" }] },
+      contents: [{ role: "user", parts: [{ text: "Hi" }] }],
+    },
   },
   {
     name: "assistant message conversion",
-    input: { messages: [{ role: "user", content: "Hi" }, { role: "assistant", content: "Hello" }] },
-    expected: { contents: [{ role: "user", parts: [{ text: "Hi" }] }, { role: "model", parts: [{ text: "Hello" }] }] },
+    input: {
+      messages: [
+        { role: "user", content: "Hi" },
+        { role: "assistant", content: "Hello" },
+      ],
+    },
+    expected: {
+      contents: [
+        { role: "user", parts: [{ text: "Hi" }] },
+        { role: "model", parts: [{ text: "Hello" }] },
+      ],
+    },
   },
   {
     name: "multimodal content",
@@ -85,7 +103,12 @@ const cases = [
           function: {
             name: "get_weather",
             description: "Get weather info",
-            parameters: { type: "object", properties: { location: { type: "string" } }, required: ["location"], additionalProperties: false },
+            parameters: {
+              type: "object",
+              properties: { location: { type: "string" } },
+              required: ["location"],
+              additionalProperties: false,
+            },
           },
         },
       ],
@@ -95,7 +118,11 @@ const cases = [
       toolConfig: { function_calling_config: { mode: "AUTO" } },
       tools: {
         functionDeclarations: [
-          { name: "get_weather", description: "Get weather info", parameters: { type: "object", properties: { location: { type: "string" } }, required: ["location"] } },
+          {
+            name: "get_weather",
+            description: "Get weather info",
+            parameters: { type: "object", properties: { location: { type: "string" } }, required: ["location"] },
+          },
         ],
       },
     },
@@ -103,7 +130,10 @@ const cases = [
   {
     name: "specific tool choice",
     input: { messages: [{ role: "user", content: "Hi" }], tool_choice: { function: { name: "get_weather" } } },
-    expected: { contents: [{ role: "user", parts: [{ text: "Hi" }] }], toolConfig: { function_calling_config: { mode: "ANY", allowed_function_names: ["get_weather"] } } },
+    expected: {
+      contents: [{ role: "user", parts: [{ text: "Hi" }] }],
+      toolConfig: { function_calling_config: { mode: "ANY", allowed_function_names: ["get_weather"] } },
+    },
   },
   {
     name: "json schema response format",
@@ -122,10 +152,32 @@ const cases = [
       },
     },
   },
-  { name: "required tool choice", input: { messages: [{ role: "user", content: "Hi" }], tool_choice: "required" }, expected: { contents: [{ role: "user", parts: [{ text: "Hi" }] }], toolConfig: { function_calling_config: { mode: "ANY" } } } },
-  { name: "none tool choice", input: { messages: [{ role: "user", content: "Hi" }], tool_choice: "none" }, expected: { contents: [{ role: "user", parts: [{ text: "Hi" }] }], toolConfig: { function_calling_config: { mode: "NONE" } } } },
-  { name: "string stop sequence", input: { messages: [{ role: "user", content: "Hi" }], stop: "STOP" }, expected: { contents: [{ role: "user", parts: [{ text: "Hi" }] }], generationConfig: { stopSequences: ["STOP"] } } },
-  { name: "max completion tokens", input: { messages: [{ role: "user", content: "Hi" }], max_completion_tokens: 150 }, expected: { contents: [{ role: "user", parts: [{ text: "Hi" }] }], generationConfig: { maxOutputTokens: 150 } } },
+  {
+    name: "required tool choice",
+    input: { messages: [{ role: "user", content: "Hi" }], tool_choice: "required" },
+    expected: {
+      contents: [{ role: "user", parts: [{ text: "Hi" }] }],
+      toolConfig: { function_calling_config: { mode: "ANY" } },
+    },
+  },
+  {
+    name: "none tool choice",
+    input: { messages: [{ role: "user", content: "Hi" }], tool_choice: "none" },
+    expected: {
+      contents: [{ role: "user", parts: [{ text: "Hi" }] }],
+      toolConfig: { function_calling_config: { mode: "NONE" } },
+    },
+  },
+  {
+    name: "string stop sequence",
+    input: { messages: [{ role: "user", content: "Hi" }], stop: "STOP" },
+    expected: { contents: [{ role: "user", parts: [{ text: "Hi" }] }], generationConfig: { stopSequences: ["STOP"] } },
+  },
+  {
+    name: "max completion tokens",
+    input: { messages: [{ role: "user", content: "Hi" }], max_completion_tokens: 150 },
+    expected: { contents: [{ role: "user", parts: [{ text: "Hi" }] }], generationConfig: { maxOutputTokens: 150 } },
+  },
 ];
 
 describe("gemini conversion", () => {

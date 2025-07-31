@@ -430,7 +430,7 @@ git commit . -m"$COMMIT_MSG"; git tag $VERSION; git push --follow-tags
 
 ## Release notes
 
-- [2.3.0](https://npmjs.com/package/asyncllm/v/2.2.0): 30 Jul 2025: Standardized package.json & README.md, renamed index.js to asyncllm.js
+- [2.3.1](https://npmjs.com/package/asyncllm/v/2.3.1): 31 Jul 2025: Standardized package.json & README.md, renamed index.js to asyncllm.js
 - [2.2.0](https://npmjs.com/package/asyncllm/v/2.2.0): 23 Apr 2025. Added [OpenAI Responses API](https://platform.openai.com/docs/api-reference/responses-streaming)
 - [2.1.2](https://npmjs.com/package/asyncllm/v/2.1.2): 25 Dec 2024. Update repo links
 - [2.1.1](https://npmjs.com/package/asyncllm/v/2.1.1): 9 Nov 2024. Document standalone adapter usage
