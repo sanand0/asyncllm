@@ -37,7 +37,15 @@ import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@1";
 
 Call `asyncLLM()` just like you would use `fetch` with any LLM provider with streaming responses.
 
-- [OpenAI Chat Completion Streaming](https://platform.openai.com/docs/api-reference/chat-streaming). Many providers like Azure, Groq, OpenRouter, etc. follow the OpenAI Chat Completion API.
+- [OpenAI Chat Completion Streaming](https://platform.openai.com/docs/api-reference/chat-streaming). Many providers including
+  [Anthropic](https://docs.anthropic.com/en/api/openai-sdk),
+  [Gemini](https://ai.google.dev/gemini-api/docs/openai),
+  [Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/start/openai),
+  [OpenRouter](https://openrouter.ai/docs/quickstart),
+  [Groq](https://console.groq.com/docs/api-reference#chat-create),
+  [Cerebras](https://inference-docs.cerebras.ai/resources/openai),
+  [Azure](https://learn.microsoft.com/en-us/azure/ai-foundry/openai/reference),
+  etc. follow the OpenAI Chat Completion API.
 - [OpenAI Responses API Streaming](https://platform.openai.com/docs/api-reference/responses-streaming).
 - [Anthropic Streaming](https://docs.anthropic.com/en/api/messages-streaming)
 - [Gemini Streaming](https://ai.google.dev/gemini-api/docs/text-generation?lang=rest#generate-a-text-stream)
