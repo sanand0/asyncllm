@@ -58,7 +58,7 @@ For example, to update the DOM with the LLM's response:
 import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@2";
 
 const body = {
-  model: "gpt-4.1-nano",
+  model: "gpt-5-nano",
   // You MUST enable streaming, else the API will return an {error}
   stream: true,
   messages: [{ role: "user", content: "Hello, world!" }],
@@ -162,7 +162,7 @@ Image Sources
 import { asyncLLM } from "https://cdn.jsdelivr.net/npm/asyncllm@2";
 
 const body = {
-  model: "gpt-4.1-mini",
+  model: "gpt-5-mini",
   // You MUST enable streaming, else the API will return an {error}
   stream: true,
   input: "Hello, world!",
@@ -265,7 +265,7 @@ for await (const { tools } of asyncLLM("https://api.openai.com/v1/chat/completio
     Authorization: `Bearer ${apiKey}`,
   },
   body: JSON.stringify({
-    model: "gpt-4.1-nano",
+    model: "gpt-5-nano",
     stream: true,
     messages: [
       { role: "system", content: "Get delivery date for order" },
